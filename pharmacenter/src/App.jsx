@@ -1,7 +1,10 @@
+//Prueba para ver que si esté funcionando
+
 function App() {
   return (
     <div style={{
       backgroundColor: 'white',
+      color: 'black',          
       height: '100vh',
       display: 'flex',
       justifyContent: 'center',
