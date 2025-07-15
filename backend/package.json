@@ -1,0 +1,20 @@
+{
+    "name": "pharmacenter-backend",
+    "version": "1.0.0",
+    "description": "Backend con Node.js, Express y PostgreSQL",
+    "main": "src/server.js",
+    "scripts": {
+        "start": "node src/server.js",
+        "dev": "nodemon src/server.js"
+    },
+    "dependencies": {
+        "bcrypt": "^5.1.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.0",
+        "node-cron": "^3.0.3",
+        "nodemailer": "^6.10.1",
+        "pg": "^8.10.0"
+    }
+}

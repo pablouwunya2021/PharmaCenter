@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: pharma_user
+      POSTGRES_PASSWORD: pharma_password123
+      POSTGRES_DB: pharmacenter_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - pharmanetwork
+
+  backend:
+    build: ./backend
+    container_name: pharmacenter_api
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: postgres
+      DB_USER: pharma_user
+      DB_PASSWORD: pharma_password123
+      DB_NAME: pharmacenter_db
+      DB_PORT: 5432
+    depends_on:
+      - postgres
+    networks:
+      - pharmanetwork
+
+  frontend:
+    build: ./pharmacenter
+    container_name: pharmacenter_frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - pharmanetwork
+
+networks:
+  pharmanetwork:
+    driver: bridge
+
+volumes:
+  postgres_data:
