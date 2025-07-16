@@ -1,6 +1,6 @@
 import signupcomp from "../components/signupcomp";
 
-function signup() {
+function Signup() {
   return (
     <div>
         <h1>Página para crear usuario</h1>
@@ -9,4 +9,4 @@ function signup() {
   );
 }
 
-export default signup;
+export default Signup;
