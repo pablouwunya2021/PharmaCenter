@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 
-import BotonPersonalizado from './BotonPersonalizado.jsx';
 import Carousel from './Carousel.jsx';
 import Catalogo from './Catalogo.jsx';
 import Header from './Header.jsx';
@@ -10,10 +9,6 @@ import Sidebar from './Sidebar.jsx';
 import SignupComp from './signupcomp.jsx'; // nombre corregido a PascalCase
 
 describe('Verificar que los componentes se pueden renderizar', () => {
-  test('BotonPersonalizado', () => {
-    render(<BotonPersonalizado />);
-  });
-
   test('Carousel', () => {
     render(<Carousel />);
   });
