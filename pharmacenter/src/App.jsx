@@ -1,10 +1,45 @@
+import React, { useEffect, useState } from 'react'
+import Loader from './components/Loader'
+import Sidebar from './components/Sidebar'
+import Header from './components/Header'
+import Carousel from './components/Carousel'
+import Catalogo from './components/Catalogo'
+import Publicidad from './components/Publicidad';
+import BotonPersonalizado from './components/BotonPersonalizado';
+
 function App() {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsLoading(false)
+    }, 2000)
+    return () => clearTimeout(timeout)
+  }, [])
+
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-white space-y-4">
-      <h1 className="text-4xl font-bold text-green-600">Pharmacenter</h1>
-      <h2 className="text-2xl font-semibold text-yellow-400">Si ves esto, Tailwind funciona</h2>
-    </div>
-  );
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <Sidebar />
+          <div className="overlay" id="overlay"></div>
+          <Header />
+          <main className="main-content" id="content">
+            <Carousel />
+            <Catalogo />
+            <Publicidad />
+            <BotonPersonalizado 
+              texto="Redes Sociales" 
+              url="https://linktr.ee/dra.gabrielaarguello"
+              style={{ width: '100%', textAlign: 'center' }} 
+            />
+          </main>
+        </>
+      )}
+    </>
+  )
 }
 
-export default App;
+export default App
