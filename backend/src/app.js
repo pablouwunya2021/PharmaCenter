@@ -1,11 +1,11 @@
 require('dotenv').config();
 const express = require('express');
-const app = express();
+//const app = express();
 const db = require('./models/db');
 const cors = require('cors');
 const { transporter, sendLowStockAlert } = require('./utils/email');
 const { scheduleInventoryChecks } = require('./utils/monitor');
-
+const app = express();
 // Middlewares
 app.use(cors({
   origin: '*',
@@ -253,7 +253,8 @@ app.post('/api/login', async (req, res) => {
 // Health Check
 app.get('/ping', (req, res) => res.send('pong'));
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`API PharmaCenter en http://localhost:${PORT}`);
-});
+//const PORT = process.env.PORT || 3000;
+//app.listen(PORT, () => {
+  //console.log(`API PharmaCenter en http://localhost:${PORT}`);
+//});
+module.exports = app;
