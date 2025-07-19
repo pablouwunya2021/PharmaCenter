@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function Sidebar() {
+  const navigate = useNavigate();
+
   useEffect(() => {
     const sidebar = document.getElementById('sidebar')
     const overlay = document.getElementById('overlay')
@@ -23,6 +26,10 @@ function Sidebar() {
     })
   }, [])
 
+  const handleLoginClick = () => {
+    navigate('/login');
+  }
+
   return (
     <aside className="sidebar" id="sidebar">
       <div className="sidebar-header">
@@ -31,7 +38,23 @@ function Sidebar() {
       </div>
       <nav>
         <ul>
-          <li><a href="/login.html">Login Administrativo</a></li>
+          <li>
+            <button 
+              onClick={handleLoginClick}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: '#70589a', 
+                textDecoration: 'none', 
+                fontWeight: '100', 
+                fontSize: '18px',
+                cursor: 'pointer',
+                padding: 0
+              }}
+            >
+              Login Administrativo
+            </button>
+          </li>
         </ul>
       </nav>
     </aside>
