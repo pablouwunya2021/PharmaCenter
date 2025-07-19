@@ -22,7 +22,7 @@ Estas pruebas verifican el comportamiento de los endpoints definidos en `app.js`
 
 bash
 # En contenedor:
-docker compose run --rm backend npm test
+ npm test
 
 
 ## Frontend
