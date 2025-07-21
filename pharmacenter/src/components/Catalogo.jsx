@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Catalogo() {
   const [medicamentos, setMedicamentos] = useState([]);
@@ -23,17 +24,6 @@ function Catalogo() {
     catalog.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
   };
 
-  const buildCompraUrl = (med) => {
-    const params = new URLSearchParams({
-      nombre: med.nombre,
-      precio: med.precio,
-      proveedor: med.proveedor,
-      cantidad: med.cantidadinventario,
-      imagen: med.imagenurl
-    });
-    return `compra.html?id=${med.idmedicamento}`;
-  };
-
   return (
     <section className="catalog" style={{ fontFamily: 'Montserrat, sans-serif' }}>
       <h2>Medicamentos Disponibles</h2>
@@ -52,11 +42,13 @@ function Catalogo() {
               <p>Cantidad: {med.cantidadinventario}</p>
               <p>Precio: ${med.precio}</p>
               <p>Proveedor: {med.proveedor}</p>
-              <a href={buildCompraUrl(med)} className="btn-comprar">Comprar</a>
+              <Link to={`/compra/${med.idmedicamento}`} className="btn-comprar">
+                Comprar
+              </Link>
             </div>
           ))}
         </div>
-        <button className="catalog-btn next" onClick={() => moveCarousel(1)}>&#10094;</button>
+        <button className="catalog-btn next" onClick={() => moveCarousel(1)}>&#10095;</button>
       </div>
     </section>
   );
