@@ -11,6 +11,7 @@ const Signup = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,8 +24,21 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    console.log('Datos del formulario:', formData);
-    // Aquí irías tu lógica de registro
+    const newErrors = {};
+    
+    if (!formData.email.includes('@')) {
+      newErrors.email = 'El correo debe contener @';
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Las contraseñas no coinciden';
+    }
+    
+    setErrors(newErrors);
+    
+    if (Object.keys(newErrors).length === 0) {
+      console.log('Datos del formulario:', formData);
+    }
   };
 
   return (
@@ -56,9 +70,14 @@ const Signup = () => {
               type="text"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={`w-full px-3 py-2 border rounded ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              }`}
               placeholder="tu@email.com"
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
           <div>
@@ -94,7 +113,9 @@ const Signup = () => {
                 type={showConfirmPassword ? "text" : "password"}
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded"
+                className={`w-full px-3 py-2 pr-10 border rounded ${
+                  errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="Confirma tu contraseña"
               />
               <button
@@ -105,6 +126,9 @@ const Signup = () => {
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+            )}
           </div>
 
           <button
