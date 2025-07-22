@@ -4,6 +4,7 @@ import Signup from './pages/signup'
 import Cart from './pages/cart';
 import LoginPage from './pages/LoginPage';
 import CompraPage from './pages/CompraPage';
+import Inventory from './pages/Inventory'
 
 function App() {
   return (
