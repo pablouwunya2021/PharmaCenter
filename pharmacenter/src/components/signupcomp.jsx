@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
-const Signup = () => {
+const SignupComp = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -143,4 +143,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignupComp;
