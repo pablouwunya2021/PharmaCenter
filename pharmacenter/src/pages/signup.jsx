@@ -1,7 +1,7 @@
 import SignupComp from '../components/signupcomp';
-import FondoSignup from '../assets/images/FondoSignup.webp';
+import FondoSignup from '../assets/FondoSignup.webp';
 
-const SignupPage = () => {
+const Signup = () => {
   return (
     <div 
       className="min-h-screen bg-cover bg-center bg-no-repeat"
@@ -17,4 +17,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default Signup;
