@@ -1,5 +1,18 @@
 import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+
+const EyeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+);
+
+const EyeOffIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+    <line x1="1" y1="1" x2="23" y2="23"/>
+  </svg>
+);
 
 const SignupComp = () => {
   const [formData, setFormData] = useState({
@@ -26,11 +39,23 @@ const SignupComp = () => {
     
     const newErrors = {};
     
-    if (!formData.email.includes('@')) {
+    if (!formData.username.trim()) {
+      newErrors.username = 'El nombre de usuario es requerido';
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = 'El correo electrónico es requerido';
+    } else if (!formData.email.includes('@')) {
       newErrors.email = 'El correo debe contener @';
     }
     
-    if (formData.password !== formData.confirmPassword) {
+    if (!formData.password.trim()) {
+      newErrors.password = 'La contraseña es requerida';
+    }
+    
+    if (!formData.confirmPassword.trim()) {
+      newErrors.confirmPassword = 'Confirmar contraseña es requerido';
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Las contraseñas no coinciden';
     }
     
@@ -42,38 +67,37 @@ const SignupComp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-96 p-8 bg-white rounded-lg shadow-md border">
-        <h2 className="text-2xl font-bold mb-6 text-center">Crear Cuenta</h2>
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="w-96 p-8 bg-white bg-opacity-90 rounded-3xl shadow-lg backdrop-blur-sm">
+        <h2 className="text-2xl font-bold mb-6 text-center text-purple-600">Crear Usuario</h2>
         
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Nombre de Usuario
-            </label>
             <input
               name="username"
               type="text"
               value={formData.username}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-              placeholder="Tu nombre de usuario"
+              className={`w-full px-4 py-3 bg-purple-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                errors.username ? 'focus:ring-red-300 bg-red-50' : 'focus:ring-purple-300'
+              }`}
+              placeholder="Nombre de usuario"
             />
+            {errors.username && (
+              <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+            )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Correo Electrónico
-            </label>
             <input
               name="email"
               type="text"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-3 py-2 border rounded ${
-                errors.email ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-4 py-3 bg-purple-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                errors.email ? 'focus:ring-red-300 bg-red-50' : 'focus:ring-purple-300'
               }`}
-              placeholder="tu@email.com"
+              placeholder="Correo electrónico"
             />
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -81,49 +105,48 @@ const SignupComp = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Contraseña
-            </label>
             <div className="relative">
               <input
                 name="password"
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded"
-                placeholder="Tu contraseña"
+                className={`w-full px-4 py-3 pr-12 bg-purple-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                  errors.password ? 'focus:ring-red-300 bg-red-50' : 'focus:ring-purple-300'
+                }`}
+                placeholder="Contraseña"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-600"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
               </button>
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Confirmar Contraseña
-            </label>
             <div className="relative">
               <input
                 name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 pr-10 border rounded ${
-                  errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-3 pr-12 bg-purple-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                  errors.confirmPassword ? 'focus:ring-red-300 bg-red-50' : 'focus:ring-purple-300'
                 }`}
-                placeholder="Confirma tu contraseña"
+                placeholder="Confirmar contraseña"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-600"
               >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
               </button>
             </div>
             {errors.confirmPassword && (
@@ -133,9 +156,9 @@ const SignupComp = () => {
 
           <button
             onClick={handleSubmit}
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 mt-6"
+            className="w-full py-3 px-4 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors duration-200 font-medium mt-6"
           >
-            Registrarse
+            Crear Usuario
           </button>
         </div>
       </div>
