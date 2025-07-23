@@ -1,12 +1,20 @@
-import SignupComp from "../components/signupcomp";
+import SignupComp from '../components/signupcomp';
+import FondoSignup from '../assets/images/FondoSignup.webp';
 
-function Signup() {
+const SignupPage = () => {
   return (
-    <div>
-        <h1>Página para crear usuario</h1>
+    <div 
+      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `url(${FondoSignup})`,
+        backdropFilter: 'blur(10px)'
+      }}
+    >
+      <div className="min-h-screen bg-black bg-opacity-30 backdrop-blur-sm">
         <SignupComp />
+      </div>
     </div>
   );
-}
+};
 
-export default Signup;
+export default SignupPage;
