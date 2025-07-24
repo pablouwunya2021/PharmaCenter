@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ProductoCard from '../components/ProductoCard';
-import HeaderCompraPage from '../components/HeaderCompraPage'; // Al inicio del archivo
 
 function CompraPage() {
   const { id } = useParams();
@@ -29,7 +28,6 @@ function CompraPage() {
 
   return (
   <>
-    <HeaderCompraPage />
     <main style={{ padding: '2rem' }}>
       <ProductoCard producto={producto} />
     </main>
