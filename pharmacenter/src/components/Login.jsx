@@ -16,7 +16,6 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
-    // Limpiar errores cuando el usuario empieza a escribir
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -54,7 +53,6 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // Simular llamada a la API
       const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
         headers: {
@@ -69,9 +67,8 @@ const Login = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Login exitoso
         alert('¡Inicio de sesión exitoso!');
-        navigate('/'); // Redirigir al home
+        navigate('/inventory');
       } else {
         setErrors({ general: data.message || 'Credenciales incorrectas' });
       }
@@ -84,165 +81,215 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f4ebfa' }}>
-      {/* Contenedor principal */}
-      <div className="w-full max-w-md">
-        {/* Tarjeta de login */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-purple-100">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="mb-4">
-              <div 
-                className="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-4xl text-white"
-                style={{ backgroundColor: '#5c3c92' }}
-              >
-                🏥
-              </div>
-            </div>
-            <h1 
-              className="text-3xl font-light mb-2"
-              style={{ color: '#5c3c92', fontFamily: 'Montserrat, sans-serif' }}
-            >
-              PharmaCenter
-            </h1>
-            <p className="text-gray-600 font-light">
-              Acceso Administrativo
-            </p>
-          </div>
-
-          {/* Formulario */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Error general */}
-            {errors.general && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {errors.general}
-              </div>
-            )}
-
-            {/* Campo de Email */}
-            <div>
-              <label 
-                htmlFor="email" 
-                className="block text-sm font-medium mb-2"
-                style={{ color: '#5c3c92' }}
-              >
-                Correo Electrónico
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                  errors.email 
-                    ? 'border-red-300 focus:ring-red-200' 
-                    : 'border-purple-200 focus:ring-purple-200'
-                }`}
-                placeholder="tu@email.com"
-                style={{ borderColor: errors.email ? '#ef4444' : '#d1b3f0' }}
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Campo de Contraseña */}
-            <div>
-              <label 
-                htmlFor="password" 
-                className="block text-sm font-medium mb-2"
-                style={{ color: '#5c3c92' }}
-              >
-                Contraseña
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                  errors.password 
-                    ? 'border-red-300 focus:ring-red-200' 
-                    : 'border-purple-200 focus:ring-purple-200'
-                }`}
-                placeholder="Tu contraseña"
-                style={{ borderColor: errors.password ? '#ef4444' : '#d1b3f0' }}
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-              )}
-            </div>
-
-            {/* Checkbox Recordarme */}
-            <div className="flex items-center justify-between">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="rounded border-purple-300 text-purple-600 focus:ring-purple-200"
-                />
-                <span className="ml-2 text-sm text-gray-600">
-                  Recordarme
-                </span>
-              </label>
-              <button
-                type="button"
-                className="text-sm hover:underline"
-                style={{ color: '#5c3c92' }}
-                onClick={() => alert('Funcionalidad en desarrollo')}
-              >
-                ¿Olvidaste tu contraseña?
-              </button>
-            </div>
-
-            {/* Botón de Iniciar Sesión */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-300 ${
-                isLoading 
-                  ? 'opacity-50 cursor-not-allowed' 
-                  : 'hover:shadow-lg transform hover:scale-105'
-              }`}
-              style={{ 
-                backgroundColor: '#5c3c92',
-                fontFamily: 'Montserrat, sans-serif'
-              }}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Iniciando sesión...
-                </div>
-              ) : (
-                'Iniciar Sesión'
-              )}
-            </button>
-          </form>
-
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600">
-              ¿No tienes cuenta?{' '}
-              <button
-                onClick={() => navigate('/signup')}
-                className="font-medium hover:underline"
-                style={{ color: '#5c3c92' }}
-              >
-                Regístrate aquí
-              </button>
-            </p>
-          </div>
+    <div 
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#f4ebfa',
+        fontFamily: 'Montserrat, sans-serif',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}
+    >
+      <div 
+        style={{
+          backgroundColor: '#d1b3f0',
+          width: '100%',
+          maxWidth: '400px',
+          padding: '40px',
+          borderRadius: '15px',
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)',
+          position: 'relative'
+        }}
+      >
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+          <h2 
+            style={{
+              color: '#5c3c92',
+              fontWeight: '300',
+              fontSize: '28px',
+              margin: '0 0 10px 0'
+            }}
+          >
+            Login Administrativo
+          </h2>
+          <p style={{ color: '#70589a', fontWeight: '100', fontSize: '16px', margin: 0 }}>
+            Farmacia Bethesda
+          </p>
         </div>
 
-        {/* Información adicional */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
-            Sistema seguro protegido con encriptación SSL
+        {/* Formulario */}
+        <form onSubmit={handleSubmit}>
+          {/* Error general */}
+          {errors.general && (
+            <div 
+              style={{
+                backgroundColor: '#ffebee',
+                border: '1px solid #e57373',
+                color: '#c62828',
+                padding: '12px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                fontSize: '14px'
+              }}
+            >
+              {errors.general}
+            </div>
+          )}
+
+          {/* Campo Email */}
+          <div style={{ marginBottom: '20px' }}>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Correo electrónico"
+              style={{
+                width: '100%',
+                padding: '15px',
+                border: errors.email ? '2px solid #e57373' : '2px solid transparent',
+                borderRadius: '10px',
+                backgroundColor: errors.email ? '#ffebee' : '#c6a0f0',
+                color: '#5c3c92',
+                fontSize: '16px',
+                fontFamily: 'Montserrat, sans-serif',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => {
+                e.target.style.backgroundColor = '#b896e8';
+              }}
+              onBlur={(e) => {
+                e.target.style.backgroundColor = errors.email ? '#ffebee' : '#c6a0f0';
+              }}
+            />
+            {errors.email && (
+              <p style={{ color: '#c62828', fontSize: '12px', margin: '5px 0 0 0' }}>
+                {errors.email}
+              </p>
+            )}
+          </div>
+
+          {/* Campo Contraseña */}
+          <div style={{ marginBottom: '25px' }}>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Contraseña"
+              style={{
+                width: '100%',
+                padding: '15px',
+                border: errors.password ? '2px solid #e57373' : '2px solid transparent',
+                borderRadius: '10px',
+                backgroundColor: errors.password ? '#ffebee' : '#c6a0f0',
+                color: '#5c3c92',
+                fontSize: '16px',
+                fontFamily: 'Montserrat, sans-serif',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => {
+                e.target.style.backgroundColor = '#b896e8';
+              }}
+              onBlur={(e) => {
+                e.target.style.backgroundColor = errors.password ? '#ffebee' : '#c6a0f0';
+              }}
+            />
+            {errors.password && (
+              <p style={{ color: '#c62828', fontSize: '12px', margin: '5px 0 0 0' }}>
+                {errors.password}
+              </p>
+            )}
+          </div>
+
+          {/* Botón de Login */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              width: '100%',
+              padding: '15px',
+              backgroundColor: isLoading ? '#9e9e9e' : '#5c3c92',
+              color: 'white',
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '16px',
+              fontFamily: 'Montserrat, sans-serif',
+              fontWeight: '500',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s ease',
+              boxSizing: 'border-box'
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading) {
+                e.target.style.backgroundColor = '#4a2c75';
+                e.target.style.transform = 'translateY(-2px)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading) {
+                e.target.style.backgroundColor = '#5c3c92';
+                e.target.style.transform = 'translateY(0)';
+              }
+            }}
+          >
+            {isLoading ? (
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span 
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid #ffffff',
+                    borderTop: '2px solid transparent',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                    marginRight: '8px'
+                  }}
+                ></span>
+                Iniciando sesión...
+              </span>
+            ) : (
+              'Iniciar Sesión'
+            )}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div style={{ textAlign: 'center', marginTop: '25px' }}>
+          <p style={{ color: '#70589a', fontSize: '14px', margin: 0 }}>
+            ¿No tienes cuenta?{' '}
+            <button
+              onClick={() => navigate('/signup')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#5c3c92',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                fontFamily: 'Montserrat, sans-serif',
+                fontSize: '14px'
+              }}
+            >
+              Regístrate aquí
+            </button>
           </p>
         </div>
       </div>
+
+      {/* CSS para animación del spinner */}
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };
