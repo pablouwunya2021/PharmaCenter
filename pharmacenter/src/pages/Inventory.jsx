@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import InventoryTable from '../components/InventoryTable'
 import AddMedicationForm from '../components/AddMedicationForm'
-import '../styles/inventory.css'
+import '../styles/Inventory.css'
 import Header from '../components/Header'
 
 const Inventory = () => {
