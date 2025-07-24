@@ -18,7 +18,6 @@ const Cart = () => {
 
   return (
     <>
-      <Header /> {/* ⬅ Colocado arriba como estructura principal */}
 
       <div style={{ padding: "2rem" }}>
         <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
