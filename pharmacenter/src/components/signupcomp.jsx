@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const EyeIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -15,6 +16,8 @@ const EyeOffIcon = () => (
 );
 
 const SignupComp = () => {
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -32,6 +35,13 @@ const SignupComp = () => {
       ...prev,
       [name]: value
     }));
+    
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -51,6 +61,8 @@ const SignupComp = () => {
     
     if (!formData.password.trim()) {
       newErrors.password = 'La contraseña es requerida';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
     }
     
     if (!formData.confirmPassword.trim()) {
@@ -63,100 +75,106 @@ const SignupComp = () => {
     
     if (Object.keys(newErrors).length === 0) {
       console.log('Datos del formulario:', formData);
+      alert('¡Usuario creado exitosamente!');
+      navigate('/login');
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="w-96 p-8 bg-white bg-opacity-90 rounded-3xl shadow-lg backdrop-blur-sm">
-        <h2 className="text-2xl font-bold mb-6 text-center text-purple-600">Crear Usuario</h2>
+    <div className="signup-container">
+      <div className="signup-form-container">
+        <h2 className="signup-title">Crear Usuario</h2>
         
-        <div className="space-y-4">
-          <div>
+        <div className="signup-form">
+          <div className="form-group">
             <input
               name="username"
               type="text"
               value={formData.username}
               onChange={handleChange}
-              className={`w-full px-4 py-3 bg-purple-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 ${
-                errors.username ? 'focus:ring-red-300 bg-red-50' : 'focus:ring-purple-300'
-              }`}
+              className={`form-input ${errors.username ? 'error' : ''}`}
               placeholder="Nombre de usuario"
             />
             {errors.username && (
-              <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+              <div className="error-message">
+                <span>⚠️</span>
+                {errors.username}
+              </div>
             )}
           </div>
 
-          <div>
+          <div className="form-group">
             <input
               name="email"
-              type="text"
+              type="email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-4 py-3 bg-purple-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 ${
-                errors.email ? 'focus:ring-red-300 bg-red-50' : 'focus:ring-purple-300'
-              }`}
+              className={`form-input ${errors.email ? 'error' : ''}`}
               placeholder="Correo electrónico"
             />
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              <div className="error-message">
+                <span>⚠️</span>
+                {errors.email}
+              </div>
             )}
           </div>
 
-          <div>
-            <div className="relative">
+          <div className="form-group">
+            <div className="password-container">
               <input
                 name="password"
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 pr-12 bg-purple-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 ${
-                  errors.password ? 'focus:ring-red-300 bg-red-50' : 'focus:ring-purple-300'
-                }`}
+                className={`form-input password-input ${errors.password ? 'error' : ''}`}
                 placeholder="Contraseña"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-600"
+                className="password-toggle"
               >
                 {showPassword ? <EyeOffIcon /> : <EyeIcon />}
               </button>
             </div>
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              <div className="error-message">
+                <span>⚠️</span>
+                {errors.password}
+              </div>
             )}
           </div>
 
-          <div>
-            <div className="relative">
+          <div className="form-group">
+            <div className="password-container">
               <input
                 name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 pr-12 bg-purple-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 ${
-                  errors.confirmPassword ? 'focus:ring-red-300 bg-red-50' : 'focus:ring-purple-300'
-                }`}
+                className={`form-input password-input ${errors.confirmPassword ? 'error' : ''}`}
                 placeholder="Confirmar contraseña"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-600"
+                className="password-toggle"
               >
                 {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
               </button>
             </div>
             {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+              <div className="error-message">
+                <span>⚠️</span>
+                {errors.confirmPassword}
+              </div>
             )}
           </div>
 
           <button
             onClick={handleSubmit}
-            className="w-full py-3 px-4 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors duration-200 font-medium mt-6"
+            className="submit-button"
           >
             Crear Usuario
           </button>
