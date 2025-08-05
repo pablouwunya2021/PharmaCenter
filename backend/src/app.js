@@ -33,6 +33,20 @@ function verifyToken(req, res, next) {
     next();
   });
 }
+
+// Middleware para verificar el rol 
+
+function verifyRole(requiredRole) {
+  return (req, res, next) => {
+    if (req.user.rol !== requiredRole) {
+      return res.status(403).json({ message: "No tienes permisos para acceder a esta ruta" });
+    }
+    next();
+  };
+}
+
+
+
 //=======================RUTAS====================================
 
 //================== Medicamentos =========================
@@ -204,8 +218,14 @@ app.get('/api/usuarios', verifyToken, async (req, res) => {
   // GET: Obtener un usuario por ID
 app.get('/api/usuarios/:id', verifyToken, async (req, res) => {
     const { id } = req.params;
+
+    // 🔹 Solo el propio usuario o un admin puede acceder
+    if (req.user.rol !== 'admin' && req.user.idUsuario !== parseInt(id)) {
+        return res.status(403).json({ error: 'No tienes permiso para ver este usuario' });
+    }
+
     try {
-      const result = await db.query('SELECT idUsuario, nombre FROM Usuario WHERE idUsuario = $1', [id]);
+      const result = await db.query('SELECT idUsuario, nombre, correo, rol FROM Usuario WHERE idUsuario = $1', [id]);
       if (result.rows.length === 0) {
         return res.status(404).json({ error: 'Usuario no encontrado' });
       }
@@ -213,7 +233,7 @@ app.get('/api/usuarios/:id', verifyToken, async (req, res) => {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  });
+});
 
 
 // POST: Crear un nuevo usuario
@@ -235,26 +255,33 @@ app.post('/api/usuarios', async (req, res) => {
 
 // PUT: Crear contraseñas
 app.put('/api/usuarios/:id', verifyToken, async (req, res) => {
-  const { id } = req.params;
-  const { nombre, contrasena } = req.body;
-  try {
-    const result = await db.query(
-      'UPDATE contrasena SET contrasena = $1, nombre = $2 WHERE idUsuario = $3',
-      [contrasena, nombre, id]
-    );
+    const { id } = req.params;
+    const { nombre, contrasena } = req.body;
 
-    if (result === result) {
-      return res.status(409).json({ error: 'No se puede elegir la misma contraseña' });
+    // Solo el propio usuario o un admin puede cambiar la contraseña
+    if (req.user.rol !== 'admin' && req.user.idUsuario !== parseInt(id)) {
+        return res.status(403).json({ error: 'No tienes permiso para modificar este usuario' });
     }
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+    try {
+        // Hashear la nueva contraseña
+        const hashedPassword = await bcrypt.hash(contrasena, 10);
+
+        const result = await db.query(
+            'UPDATE Usuario SET contrasena = $1, nombre = $2 WHERE idUsuario = $3',
+            [hashedPassword, nombre, id]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        res.json({ message: 'Contraseña actualizada exitosamente' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-    res.json({ message: 'Usuario actualizado exitosamente' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
 });
+
 
 //=================== Login =========================
 
@@ -272,16 +299,14 @@ app.post('/api/login', async (req, res) => {
     }
 
     const user = result.rows[0];
-
-    // Verificar contraseña
     const match = await bcrypt.compare(contrasena, user.contrasena);
     if (!match) {
       return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
     }
 
-    // Generar token
+    // Incluir rol en el token
     const token = jwt.sign(
-      { idUsuario: user.idusuario, correo: user.correo },
+      { idUsuario: user.idusuario, correo: user.correo, rol: user.rol },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -291,6 +316,7 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // Health Check
 app.get('/ping', (req, res) => res.send('pong'));
