@@ -7,6 +7,9 @@ const { transporter, sendLowStockAlert } = require('./utils/email');
 const { scheduleInventoryChecks } = require('./utils/monitor');
 const app = express();
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+//=======================MIDDLEWARES====================================
 // Middlewares
 app.use(cors({
   origin: '*',
@@ -16,6 +19,23 @@ app.use(cors({
 app.use(express.json());
 
 scheduleInventoryChecks();
+
+// Middleware para verificar el token JWT
+
+function verifyToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  if (!authHeader) return res.status(403).json({ message: "Token requerido" });
+
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: "Token inválido" });
+    req.user = user;
+    next();
+  });
+}
+//=======================RUTAS====================================
+
+//================== Medicamentos =========================
 
 // GET: Todos los medicamentos
 app.get('/api/medicamentos', async (req, res) => {
@@ -169,8 +189,10 @@ app.delete('/api/medicamentos/:id', async (req, res) => {
   }
 });
 
+//================== Usuarios =========================
+
 // Rutas básicas
-app.get('/api/usuarios', async (req, res) => {
+app.get('/api/usuarios', verifyToken, async (req, res) => { 
   try {
     const result = await db.query('SELECT idUsuario, nombre, correo FROM Usuario');
     res.json(result.rows);
@@ -180,7 +202,7 @@ app.get('/api/usuarios', async (req, res) => {
 });
 
   // GET: Obtener un usuario por ID
-app.get('/api/usuarios/:id', async (req, res) => {
+app.get('/api/usuarios/:id', verifyToken, async (req, res) => {
     const { id } = req.params;
     try {
       const result = await db.query('SELECT idUsuario, nombre FROM Usuario WHERE idUsuario = $1', [id]);
@@ -212,7 +234,7 @@ app.post('/api/usuarios', async (req, res) => {
 });
 
 // PUT: Crear contraseñas
-app.put('/api/usuarios/:id', async (req, res) => {
+app.put('/api/usuarios/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
   const { nombre, contrasena } = req.body;
   try {
@@ -234,22 +256,37 @@ app.put('/api/usuarios/:id', async (req, res) => {
   }
 });
 
-// Login simple (sin JWT)
+//=================== Login =========================
+
+// Login con jwt 
 app.post('/api/login', async (req, res) => {
   const { correo, contrasena } = req.body;
   try {
     const result = await db.query(
-      'SELECT * FROM Usuario WHERE correo = $1 AND contrasena = $2',
-      [correo, contrasena]
+      'SELECT * FROM Usuario WHERE correo = $1',
+      [correo]
     );
 
-    if (result.rows.length === 1) {
-      // Login exitoso
-      res.json({ success: true });
-    } else {
-      // Credenciales incorrectas
-      res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
+    if (result.rows.length === 0) {
+      return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
     }
+
+    const user = result.rows[0];
+
+    // Verificar contraseña
+    const match = await bcrypt.compare(contrasena, user.contrasena);
+    if (!match) {
+      return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
+    }
+
+    // Generar token
+    const token = jwt.sign(
+      { idUsuario: user.idusuario, correo: user.correo },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({ success: true, token });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -257,9 +294,4 @@ app.post('/api/login', async (req, res) => {
 
 // Health Check
 app.get('/ping', (req, res) => res.send('pong'));
-
-//const PORT = process.env.PORT || 3000;
-//app.listen(PORT, () => {
-  //console.log(`API PharmaCenter en http://localhost:${PORT}`);
-//});
 module.exports = app;
