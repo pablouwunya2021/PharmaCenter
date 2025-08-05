@@ -66,10 +66,15 @@ const Login = () => {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && data.token) {
+        // ✅ Aquí guardamos el token JWT recibido en localStorage o sessionStorage
+        localStorage.setItem('token', data.token);
+
         alert('¡Inicio de sesión exitoso!');
+        // Aquí podrías navegar a la ruta protegida
         navigate('/inventory');
       } else {
+        // En caso de error, mostramos el mensaje que venga del backend o uno por defecto
         setErrors({ general: data.message || 'Credenciales incorrectas' });
       }
     } catch (error) {
