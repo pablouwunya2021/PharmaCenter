@@ -287,33 +287,91 @@ app.put('/api/usuarios/:id', verifyToken, async (req, res) => {
 
 // Login con jwt 
 app.post('/api/login', async (req, res) => {
-  const { correo, contrasena } = req.body;
+  console.log('Petición login recibida');           // <-- Log para indicar que entró la petición
+  console.log('Datos recibidos:', req.body);        // <-- Log para mostrar qué datos recibiste
+  
+ const { correo, email, contrasena, password } = req.body;
+
+// Normalizamos
+const userEmail = correo || email;
+const userPass = contrasena || password;
+
+try {
+  const result = await db.query(
+    'SELECT * FROM Usuario WHERE correo = $1',
+    [userEmail]
+  );
+
+  console.log('Usuario encontrado:', result.rows[0]);
+
+  if (result.rows.length === 0) {
+    return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
+  }
+
+  const user = result.rows[0];
+  const match = await bcrypt.compare(userPass, user.contrasena);
+  console.log('¿Contraseña válida?', match);
+
+  if (!match) {
+    return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
+  }
+
+  const token = jwt.sign(
+    { idUsuario: user.idusuario, correo: user.correo, rol: user.rol },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+
+  res.json({ success: true, token });
+} catch (err) {
+  console.error('Error en login:', err);
+  res.status(500).json({ error: err.message });
+}
+});
+//========================Singup===================
+app.post('/api/signup', async (req, res) => {
+  console.log('Petición de registro recibida:', req.body);
+
+  const { nombre, correo, contrasena } = req.body;
+
+  if (!nombre || !correo || !contrasena) {
+    return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+  }
+
   try {
+    // Verificar si el correo ya existe
+    const existing = await db.query('SELECT * FROM Usuario WHERE correo = $1', [correo]);
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ message: 'El correo ya está registrado' });
+    }
+
+    // Hashear contraseña
+    const hashedPassword = await bcrypt.hash(contrasena, 10);
+
+    // Insertar usuario
     const result = await db.query(
-      'SELECT * FROM Usuario WHERE correo = $1',
-      [correo]
+      'INSERT INTO Usuario (nombre, correo, contrasena, rol) VALUES ($1, $2, $3, $4) RETURNING idUsuario, nombre, correo, rol',
+      [nombre, correo, hashedPassword, 'user']
     );
 
-    if (result.rows.length === 0) {
-      return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
-    }
+    const newUser = result.rows[0];
 
-    const user = result.rows[0];
-    const match = await bcrypt.compare(contrasena, user.contrasena);
-    if (!match) {
-      return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
-    }
-
-    // Incluir rol en el token
+    // Crear token
     const token = jwt.sign(
-      { idUsuario: user.idusuario, correo: user.correo, rol: user.rol },
+      { idUsuario: newUser.idusuario, correo: newUser.correo, rol: newUser.rol },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: '1h' }
     );
 
-    res.json({ success: true, token });
+    res.status(201).json({
+      success: true,
+      message: 'Usuario registrado correctamente',
+      token,
+      user: newUser
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error en registro:', err);
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
 
