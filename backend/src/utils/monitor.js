@@ -2,7 +2,6 @@ const db = require('../models/db');
 const { sendLowStockAlert } = require('./email');
 const cron = require('node-cron');
 
-// Verificar niveles de inventario
 const checkInventoryLevels = async () => {
   try {
     const sqlQuery = `
@@ -30,8 +29,7 @@ const checkInventoryLevels = async () => {
 
 // Programar la verificación diaria
 const scheduleInventoryChecks = () => {
-  cron.schedule('45 21 * * *', () => {
-    console.log('Ejecutando verificación programada de inventario...');
+  cron.schedule('45 15,21 * * *', () => {
     checkInventoryLevels();
   });
 };
