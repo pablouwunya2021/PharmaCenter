@@ -7,7 +7,6 @@ import CompraPage from './pages/CompraPage';
 import Inventory from './pages/Inventory'
 import Header from './components/Header'
 
-// Layout que incluye el Header
 const MainLayout = ({ children }) => (
   <>
     <Header />
