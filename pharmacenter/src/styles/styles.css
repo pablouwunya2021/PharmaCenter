@@ -107,13 +107,12 @@ body {
 }
 
 /* Carrusel de imágenes */
-/* Carrusel de imágenes - Versión modificada */
 .carousel {
   margin-top: 0;
   position: relative;
   height: 100vh;
   overflow: hidden;
-  will-change: transform; /* Optimización de rendimiento */
+  will-change: transform;
 }
 
 .carousel-inner {
@@ -122,7 +121,7 @@ body {
   width: 100%;
   height: 100vh;
   border-radius: 0;
-  transform: translateZ(0); /* Forzar capa de GPU */
+  transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
 }
@@ -135,12 +134,18 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  will-change: transform, opacity; /* Pre-renderizado */
-  
+  will-change: transform, opacity;
+  opacity: 0;
+  transition:
+    opacity 0.7s cubic-bezier(0.19, 1, 0.22, 1),
+    transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .carousel-item.active {
   display: block;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  position: relative;
 }
 
 .carousel-item img {
@@ -149,21 +154,8 @@ body {
   object-fit: cover;
   filter: blur(8px) brightness(0.95);
   transform: scale(1.1);
-  transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1); 
+  transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
   backface-visibility: hidden;
-}
-
-/* Transición de fade mejorada */
-.carousel-item {
-  opacity: 0;
-   transition: 
-    opacity 0.7s cubic-bezier(0.19, 1, 0.22, 1),
-    transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-.carousel-item.active {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
 }
 
 .caption {
@@ -184,14 +176,12 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-
-
 /* BOTONES DEL CAROUSEL TRASLÚCIDOS */
 .carousel-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(92, 60, 146, 0.5); /* Traslúcido */
+  background-color: rgba(92, 60, 146, 0.5);
   color: white;
   border: none;
   padding: 10px;
@@ -199,7 +189,7 @@ body {
   cursor: pointer;
   border-radius: 50%;
   z-index: 2;
-  backdrop-filter: blur(5px); /* Desenfoque */
+  backdrop-filter: blur(5px);
   transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
@@ -264,7 +254,7 @@ body {
 
 /* BOTONES DEL CATÁLOGO TRASLÚCIDOS */
 .catalog-btn {
-  background-color: rgba(92, 60, 146, 0.5); /* Traslúcido */
+  background-color: rgba(92, 60, 146, 0.5);
   color: white;
   border: none;
   padding: 10px;
@@ -272,7 +262,7 @@ body {
   border-radius: 50%;
   font-size: 24px;
   z-index: 2;
-  backdrop-filter: blur(5px); /* Desenfoque */
+  backdrop-filter: blur(5px);
 }
 
 .catalog-btn.prev {
@@ -329,20 +319,6 @@ body {
   font-weight: 100;
 }
 
-/* Fade para carrusel */
-.carousel-item {
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.carousel-item.active {
-  opacity: 1;
-  position: relative;
-}
-
 /* Loading medicamentos */
 .loading-meds {
   text-align: center;
@@ -351,15 +327,15 @@ body {
   font-weight: 300;
 }
 
-.boton-centro {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
+/* Botón de redes sociales centrado solo después de Ofertas Especiales */
+.boton-redes-sociales-estatico {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 30px 0;
 }
 
-.boton-personalizado {
+.boton-redes-sociales-estatico .boton-personalizado {
   display: inline-block;
   padding: 12px 35px;
   background-color: #ffffff;
@@ -372,9 +348,17 @@ body {
   transition: all 0.3s ease;
   cursor: pointer;
   font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 4px 10px rgba(92, 60, 146, 0.15);
 }
 
-.boton-personalizado:hover {
+.boton-redes-sociales-estatico .boton-personalizado:hover {
   background-color: #5c3c92;
   color: white;
+  border-color: #5c3c92;
+}
+
+/* Elimina cualquier estilo de .boton-redes-sociales que use position: fixed */
+.boton-redes-sociales,
+.boton-centro {
+  display: none !important;
 }
