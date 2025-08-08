@@ -52,7 +52,6 @@
   letter-spacing: 0.5px;
 }
 
-/* 5. Estado vacío */
 .cart-container .empty-state {
   text-align: center;
   padding: 2rem 0;
@@ -76,7 +75,6 @@
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-/* 6. Grid de productos y resumen */
 .cart-container .cart-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -97,4 +95,21 @@
   font-size: 1.75rem;
   color: var(--primary);
   margin-bottom: 1rem;
+}
+
+
+
+/*  Responsive móvil */
+@media (max-width: 768px) {
+  .cart-page {
+    padding: 0 1rem;
+    padding-top: 64px;
+  }
+  .cart-container {
+    padding: 1rem;
+    width: 100%;
+  }
+  .cart-container .cart-grid {
+    grid-template-columns: 1fr;
+  }
 }
