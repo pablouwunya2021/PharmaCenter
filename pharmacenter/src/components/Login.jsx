@@ -86,12 +86,12 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-violet-50 font-montserrat flex items-center justify-center p-5">
-      <div className="bg-violet-200 w-full max-w-md p-10 rounded-2xl shadow-lg relative">
+    <div className="min-h-screen bg-[#f4ebfa] font-sans flex items-center justify-center p-5">
+      <div className="bg-[#d1b3f0] w-full max-w-md p-10 rounded-2xl shadow-xl relative">
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-violet-900 font-light text-2xl mb-2">Login Administrativo</h2>
-          <p className="text-violet-700 font-thin text-base m-0">Farmacia Bethesda</p>
+          <h2 className="text-[#5c3c92] font-light text-2xl mb-2">Login Administrativo</h2>
+          <p className="text-[#70589a] font-thin text-base m-0">Farmacia Bethesda</p>
         </div>
 
         {/* Formulario */}
@@ -111,14 +111,16 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Correo electrónico"
-              className={`w-full p-4 rounded-lg bg-violet-100 text-violet-900 text-base font-montserrat outline-none transition-all border-2 ${
+              className={`w-full p-4 rounded-xl text-[#5c3c92] text-base font-sans outline-none transition-all border-2 ${
                 errors.email
-                  ? 'border-red-400 bg-red-50'
-                  : 'border-transparent focus:bg-violet-200'
+                  ? 'border-[#e57373] bg-red-50'
+                  : 'border-transparent bg-[#c6a0f0] focus:bg-[#b896e8]'
               }`}
+              style={{ fontFamily: 'Montserrat, sans-serif' }}
+              autoComplete="username"
             />
             {errors.email && (
-              <p className="text-red-700 text-xs mt-1">{errors.email}</p>
+              <p className="text-[#c62828] text-xs mt-1">{errors.email}</p>
             )}
           </div>
 
@@ -130,14 +132,16 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Contraseña"
-              className={`w-full p-4 rounded-lg bg-violet-100 text-violet-900 text-base font-montserrat outline-none transition-all border-2 ${
+              className={`w-full p-4 rounded-xl text-[#5c3c92] text-base font-sans outline-none transition-all border-2 ${
                 errors.password
-                  ? 'border-red-400 bg-red-50'
-                  : 'border-transparent focus:bg-violet-200'
+                  ? 'border-[#e57373] bg-red-50'
+                  : 'border-transparent bg-[#c6a0f0] focus:bg-[#b896e8]'
               }`}
+              style={{ fontFamily: 'Montserrat, sans-serif' }}
+              autoComplete="current-password"
             />
             {errors.password && (
-              <p className="text-red-700 text-xs mt-1">{errors.password}</p>
+              <p className="text-[#c62828] text-xs mt-1">{errors.password}</p>
             )}
           </div>
 
@@ -145,11 +149,12 @@ const Login = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full p-4 rounded-lg text-white font-medium text-base font-montserrat transition-all ${
+            className={`w-full p-4 rounded-xl text-white font-medium text-base font-sans transition-all ${
               isLoading
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-violet-900 hover:bg-violet-800 active:translate-y-0.5'
+                : 'bg-[#5c3c92] hover:bg-[#4a2c75] active:translate-y-0.5'
             }`}
+            style={{ fontFamily: 'Montserrat, sans-serif' }}
           >
             {isLoading ? (
               <span className="flex items-center justify-center">
@@ -166,11 +171,12 @@ const Login = () => {
 
         {/* Footer */}
         <div className="text-center mt-6">
-          <p className="text-violet-700 text-sm m-0">
+          <p className="text-[#70589a] text-sm m-0">
             ¿No tienes cuenta?{' '}
             <button
               onClick={() => navigate('/signup')}
-              className="bg-none border-none text-violet-900 underline cursor-pointer font-montserrat text-sm p-0"
+              className="bg-none border-none text-[#5c3c92] underline cursor-pointer font-sans text-sm p-0"
+              style={{ fontFamily: 'Montserrat, sans-serif' }}
               type="button"
             >
               Regístrate aquí
