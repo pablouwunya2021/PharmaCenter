@@ -184,6 +184,11 @@ const Login = () => {
           </p>
         </div>
       </div>
+
+      {/* Prueba Tailwind - Clase Notoria */}
+      <div className="bg-red-500">
+        Prueba Tailwind
+      </div>
     </div>
   );
 };
