@@ -1,25 +1,42 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import ProductoCard from '../components/ProductoCard';
-import FondoCompra from '../assets/fondocompra.webp'; // Asegúrate de que exista
+import FondoCompra from '../assets/fondocompra.webp';
 import '../styles/compra.css';
 
 function CompraPage() {
-  const [productos, setProductos] = useState([]);
+  const { id } = useParams();
+  const [producto, setProducto] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fakeProductos = [
-      {
-        id: 1,
-        nombre: "Paracetamol",
-        cantidadInventario: 100,
-        precio: 3.50,
-        proveedor: "Farfasa",
-        imagenUrl: "https://walmartgt.vtexassets.com/arquivos/ids/322244/Ibuprofeno-Mk-600-Mg-50-Tabletas-1-32817.jpg"
-      },
-    ];
+    async function cargarProducto() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/medicamentos/${id}`);
+        if (!res.ok) throw new Error('No se pudo obtener el medicamento');
 
-    setTimeout(() => setProductos(fakeProductos), 200);
-  }, []);
+        const data = await res.json();
+
+        const productoAdaptado = {
+          id: data.idmedicamento,
+          nombre: data.nombre,
+          cantidadInventario: data.cantidadinventario,
+          precio: Number(data.precio),
+          proveedor: data.proveedor,
+          imagenUrl: data.imagenurl,
+        };
+
+        setProducto(productoAdaptado);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+
+    cargarProducto();
+  }, [id]);
+
+  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
+  if (!producto) return <p>Cargando medicamento...</p>;
 
   return (
     <div 
@@ -29,12 +46,11 @@ function CompraPage() {
       }}
     >
       <div className="compra-overlay">
-        {productos.map(p => (
-          <ProductoCard key={p.id} producto={p} />
-        ))}
+        <ProductoCard producto={producto} />
       </div>
     </div>
   );
 }
 
 export default CompraPage;
+
