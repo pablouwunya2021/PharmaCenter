@@ -1,10 +1,25 @@
 {
-  "dependencies": {
-    "lucide-react": "^0.525.0",
-    "react-router-dom": "^7.7.0"
+  "name": "pharmacenter",
+  "version": "1.0.0",
+  "description": "PharmaCenter es una aplicación diseñada para la gestión eficiente de farmacias, permitiendo el control de inventario, ventas, compras y clientes de manera sencilla y centralizada.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pablouwunya2021/PharmaCenter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pablouwunya2021/PharmaCenter/issues"
+  },
+  "homepage": "https://github.com/pablouwunya2021/PharmaCenter#readme",
   "devDependencies": {
-    "jest": "^30.0.4",
-    "supertest": "^7.1.3"
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.3"
   }
 }
