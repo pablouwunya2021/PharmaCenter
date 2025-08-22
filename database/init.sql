@@ -70,7 +70,7 @@ INSERT INTO Medicamento (nombre, cantidadInventario, fechaVencimiento, precio, c
   ('Omeprazol',      90, '2025-07-01', 4.75, 2.50, 'Distribuidora Almacén Farmacéutico S.A', 'https://calox.com/wp-content/uploads/2022/12/Omeprazol-20x28-1.png'),
   ('Cetirizina',    120, '2026-05-30', 2.95, 1.70, 'Laboratorios Vijosa', 'https://www.olaiz.com/upload/principios-activos/c/cetirizina-cinfa-10mg-20comprimidos-farmacia-andorra.jpg'),
   ('Loratadina',    110, '2025-09-20', 3.10, 1.90, 'Farfas', 'https://medicamentosmk.com/static/images/loratadina-mk.webp'),
-  ('Norgestrel',     9, '2026-03-15', 6.00, 3.80, 'Farmacéutica LANCO', 'https://biotenk.com.ar/wp-content/uploads/2022/06/Norgestrel-Plus.jpeg'),
+  ('Norgestrel',     70, '2026-03-15', 6.00, 3.80, 'Farmacéutica LANCO', 'https://biotenk.com.ar/wp-content/uploads/2022/06/Norgestrel-Plus.jpeg'),
   ('Simvastatina',   65, '2025-04-01', 7.40, 4.20, 'Farmacéutica LANCO', 'https://www.denkpharma.com/wp-content/uploads/2024/07/simvastatina_denk_es.jpg'),
   ('Buscapina',     130, '2024-12-05', 4.20, 2.60, 'Laboratorios Laprin', 'https://www.buscapina.com/dam/jcr:e826d6a1-9ba5-4cbb-bd5b-09c546228dd2/3_1_hero_desktop.png'),
   ('Salbutamol',     95, '2026-02-22', 9.80, 6.00, 'Distribuidora Almacén Farmacéutico S.A', 'https://www.buscapina.com/dam/jcr:e826d6a1-9ba5-4cbb-bd5b-09c546228dd2/3_1_hero_desktop.png');

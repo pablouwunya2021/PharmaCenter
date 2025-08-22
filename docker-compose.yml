@@ -37,8 +37,6 @@ services:
     container_name: pharmacenter_frontend
     ports:
       - "8081:80"
-    volumes:
-      - ./pharmacenter:/app
     depends_on:
       - backend
     networks:

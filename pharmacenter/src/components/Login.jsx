@@ -86,62 +86,131 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4ebfa] font-sans flex items-center justify-center p-5">
-      <div className="bg-[#d1b3f0] w-full max-w-md p-10 rounded-2xl shadow-xl relative">
+    <div 
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#f4ebfa',
+        fontFamily: 'Montserrat, sans-serif',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}
+    >
+      <div 
+        style={{
+          backgroundColor: '#d1b3f0',
+          width: '100%',
+          maxWidth: '400px',
+          padding: '40px',
+          borderRadius: '15px',
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)',
+          position: 'relative'
+        }}
+      >
         {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-[#5c3c92] font-light text-2xl mb-2">Login Administrativo</h2>
-          <p className="text-[#70589a] font-thin text-base m-0">Farmacia Bethesda</p>
+        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+          <h2 
+            style={{
+              color: '#5c3c92',
+              fontWeight: '300',
+              fontSize: '28px',
+              margin: '0 0 10px 0'
+            }}
+          >
+            Login Administrativo
+          </h2>
+          <p style={{ color: '#70589a', fontWeight: '100', fontSize: '16px', margin: 0 }}>
+            Farmacia Bethesda
+          </p>
         </div>
 
         {/* Formulario */}
         <form onSubmit={handleSubmit}>
           {/* Error general */}
           {errors.general && (
-            <div className="bg-red-50 border border-red-400 text-red-800 px-4 py-3 rounded mb-5 text-sm">
+            <div 
+              style={{
+                backgroundColor: '#ffebee',
+                border: '1px solid #e57373',
+                color: '#c62828',
+                padding: '12px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                fontSize: '14px'
+              }}
+            >
               {errors.general}
             </div>
           )}
 
           {/* Campo Email */}
-          <div className="mb-5">
+          <div style={{ marginBottom: '20px' }}>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Correo electrónico"
-              className={`w-full p-4 rounded-xl text-[#5c3c92] text-base font-sans outline-none transition-all border-2 ${
-                errors.email
-                  ? 'border-[#e57373] bg-red-50'
-                  : 'border-transparent bg-[#c6a0f0] focus:bg-[#b896e8]'
-              }`}
-              style={{ fontFamily: 'Montserrat, sans-serif' }}
-              autoComplete="username"
+              style={{
+                width: '100%',
+                padding: '15px',
+                border: errors.email ? '2px solid #e57373' : '2px solid transparent',
+                borderRadius: '10px',
+                backgroundColor: errors.email ? '#ffebee' : '#c6a0f0',
+                color: '#5c3c92',
+                fontSize: '16px',
+                fontFamily: 'Montserrat, sans-serif',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => {
+                e.target.style.backgroundColor = '#b896e8';
+              }}
+              onBlur={(e) => {
+                e.target.style.backgroundColor = errors.email ? '#ffebee' : '#c6a0f0';
+              }}
             />
             {errors.email && (
-              <p className="text-[#c62828] text-xs mt-1">{errors.email}</p>
+              <p style={{ color: '#c62828', fontSize: '12px', margin: '5px 0 0 0' }}>
+                {errors.email}
+              </p>
             )}
           </div>
 
           {/* Campo Contraseña */}
-          <div className="mb-6">
+          <div style={{ marginBottom: '25px' }}>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Contraseña"
-              className={`w-full p-4 rounded-xl text-[#5c3c92] text-base font-sans outline-none transition-all border-2 ${
-                errors.password
-                  ? 'border-[#e57373] bg-red-50'
-                  : 'border-transparent bg-[#c6a0f0] focus:bg-[#b896e8]'
-              }`}
-              style={{ fontFamily: 'Montserrat, sans-serif' }}
-              autoComplete="current-password"
+              style={{
+                width: '100%',
+                padding: '15px',
+                border: errors.password ? '2px solid #e57373' : '2px solid transparent',
+                borderRadius: '10px',
+                backgroundColor: errors.password ? '#ffebee' : '#c6a0f0',
+                color: '#5c3c92',
+                fontSize: '16px',
+                fontFamily: 'Montserrat, sans-serif',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => {
+                e.target.style.backgroundColor = '#b896e8';
+              }}
+              onBlur={(e) => {
+                e.target.style.backgroundColor = errors.password ? '#ffebee' : '#c6a0f0';
+              }}
             />
             {errors.password && (
-              <p className="text-[#c62828] text-xs mt-1">{errors.password}</p>
+              <p style={{ color: '#c62828', fontSize: '12px', margin: '5px 0 0 0' }}>
+                {errors.password}
+              </p>
             )}
           </div>
 
@@ -149,17 +218,45 @@ const Login = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full p-4 rounded-xl text-white font-medium text-base font-sans transition-all ${
-              isLoading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-[#5c3c92] hover:bg-[#4a2c75] active:translate-y-0.5'
-            }`}
-            style={{ fontFamily: 'Montserrat, sans-serif' }}
+            style={{
+              width: '100%',
+              padding: '15px',
+              backgroundColor: isLoading ? '#9e9e9e' : '#5c3c92',
+              color: 'white',
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '16px',
+              fontFamily: 'Montserrat, sans-serif',
+              fontWeight: '500',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s ease',
+              boxSizing: 'border-box'
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading) {
+                e.target.style.backgroundColor = '#4a2c75';
+                e.target.style.transform = 'translateY(-2px)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading) {
+                e.target.style.backgroundColor = '#5c3c92';
+                e.target.style.transform = 'translateY(0)';
+              }
+            }}
           >
             {isLoading ? (
-              <span className="flex items-center justify-center">
-                <span
-                  className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span 
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid #ffffff',
+                    borderTop: '2px solid transparent',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                    marginRight: '8px'
+                  }}
                 ></span>
                 Iniciando sesión...
               </span>
@@ -170,14 +267,20 @@ const Login = () => {
         </form>
 
         {/* Footer */}
-        <div className="text-center mt-6">
-          <p className="text-[#70589a] text-sm m-0">
+        <div style={{ textAlign: 'center', marginTop: '25px' }}>
+          <p style={{ color: '#70589a', fontSize: '14px', margin: 0 }}>
             ¿No tienes cuenta?{' '}
             <button
               onClick={() => navigate('/signup')}
-              className="bg-none border-none text-[#5c3c92] underline cursor-pointer font-sans text-sm p-0"
-              style={{ fontFamily: 'Montserrat, sans-serif' }}
-              type="button"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#5c3c92',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                fontFamily: 'Montserrat, sans-serif',
+                fontSize: '14px'
+              }}
             >
               Regístrate aquí
             </button>
@@ -185,10 +288,13 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Prueba Tailwind - Clase Notoria */}
-      <div className="bg-red-500">
-        Prueba Tailwind
-      </div>
+      {/* CSS para animación del spinner */}
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };

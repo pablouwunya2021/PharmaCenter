@@ -22,6 +22,7 @@ const Inventory = () => {
 
   return (
       <>
+       <Header />
        <div className="inventory-page">
           <InventoryTable items={items} />
           <AddMedicationForm onAdd={fetchItems} />
