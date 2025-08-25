@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const db = require('../models/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -15,7 +15,7 @@ const userController = {
       }
 
       // Verificar si el correo ya está en uso
-      const existe = await pool.query(
+      const existe = await db.query(
         'SELECT * FROM usuarios WHERE correo = $1',
         [correo]
       );
@@ -35,7 +35,7 @@ const userController = {
       `;
       const values = [nombre, correo, hash, rol];
 
-      const result = await pool.query(query, values);
+      const result = await db.query(query, values);
       const newUser = result.rows[0];
 
       return res.status(201).json({
@@ -58,7 +58,7 @@ const userController = {
       }
 
       // Buscar usuario en la base de datos
-      const result = await pool.query(
+      const result = await db.query(
         'SELECT * FROM usuarios WHERE correo = $1',
         [correo]
       );
@@ -99,7 +99,7 @@ const userController = {
   // (3) EJEMPLO: OBTENER TODOS LOS USUARIOS (Sólo para rol "doctora", por ejemplo)
   getAllUsers: async (req, res) => {
     try {
-      const result = await pool.query(
+      const result = await db.query(
         'SELECT id_usuario, nombre, correo, rol FROM usuarios'
       );
       return res.json(result.rows);
