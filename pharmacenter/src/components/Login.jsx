@@ -52,6 +52,17 @@ const Login = () => {
 
     setIsLoading(true);
     
+    // Temporal: Verificación de credenciales hardcodeadas
+    if (formData.email === 'pharma@gmail.com' && formData.password === 'hola123') {
+      // Simulamos el almacenamiento de un token dummy
+      localStorage.setItem('token', 'dummy_token');
+      alert('¡Inicio de sesión exitoso!');
+      navigate('/inventory');
+    } else {
+      setErrors({ general: 'Credenciales incorrectas' });
+    }
+
+    /* Comentado temporalmente: Llamada a la API original
     try {
       const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
@@ -80,9 +91,10 @@ const Login = () => {
     } catch (error) {
       console.error('Error en el login:', error);
       setErrors({ general: 'Error de conexión. Intenta nuevamente.' });
-    } finally {
-      setIsLoading(false);
     }
+    */
+
+    setIsLoading(false); // Movido fuera del finally para que funcione con la lógica temporal
   };
 
   return (

@@ -205,128 +205,253 @@ app.delete('/api/medicamentos/:id', async (req, res) => {
 
 //================== Usuarios =========================
 
-// Rutas básicas
-app.get('/api/usuarios', verifyToken, async (req, res) => { 
+// GET: Todos los usuarios (solo admin)
+app.get('/api/usuarios', verifyToken, verifyRole('admin'), async (req, res) => {
   try {
-    const result = await db.query('SELECT idUsuario, nombre, correo FROM Usuario');
+    const result = await db.query('SELECT idUsuario, nombre, correo, rol FROM Usuario');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-  // GET: Obtener un usuario por ID
+// GET: Obtener un usuario por ID
 app.get('/api/usuarios/:id', verifyToken, async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    // 🔹 Solo el propio usuario o un admin puede acceder
-    if (req.user.rol !== 'admin' && req.user.idUsuario !== parseInt(id)) {
-        return res.status(403).json({ error: 'No tienes permiso para ver este usuario' });
-    }
+  // Solo el propio usuario o un admin puede acceder
+  if (req.user.rol !== 'admin' && req.user.idUsuario !== parseInt(id)) {
+    return res.status(403).json({ error: 'No tienes permiso para ver este usuario' });
+  }
 
-    try {
-      const result = await db.query('SELECT idUsuario, nombre, correo, rol FROM Usuario WHERE idUsuario = $1', [id]);
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'Usuario no encontrado' });
-      }
-      res.json(result.rows[0]);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-});
-
-
-// POST: Crear un nuevo usuario
-app.post('/api/usuarios', async (req, res) => {
-  const { nombre, correo, contrasena } = req.body;
   try {
-    // Hashear contraseña
-    const hashedPassword = await bcrypt.hash(contrasena, 10);
-
-    await db.query(
-      'INSERT INTO Usuario (nombre, correo, contrasena) VALUES ($1, $2, $3)',
-      [nombre, correo, hashedPassword]
+    const result = await db.query(
+      'SELECT idUsuario, nombre, correo, rol FROM Usuario WHERE idUsuario = $1', 
+      [id]
     );
-    res.status(201).json({ message: 'Usuario creado exitosamente' });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// PUT: Crear contraseñas
-app.put('/api/usuarios/:id', verifyToken, async (req, res) => {
-    const { id } = req.params;
-    const { nombre, contrasena } = req.body;
+// POST: Crear un nuevo usuario
+app.post('/api/usuarios', async (req, res) => {
+  const { nombre, correo, contrasena, rol = 'user' } = req.body;
+  
+  // Validaciones
+  if (!nombre || !correo || !contrasena) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  }
+  
+  if (contrasena.length < 6) {
+    return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+  }
 
-    // Solo el propio usuario o un admin puede cambiar la contraseña
-    if (req.user.rol !== 'admin' && req.user.idUsuario !== parseInt(id)) {
-        return res.status(403).json({ error: 'No tienes permiso para modificar este usuario' });
+  try {
+    // Verificar si el usuario ya existe
+    const userExists = await db.query(
+      'SELECT idUsuario FROM Usuario WHERE correo = $1',
+      [correo]
+    );
+    
+    if (userExists.rows.length > 0) {
+      return res.status(409).json({ error: 'El correo ya está registrado' });
     }
 
-    try {
-        // Hashear la nueva contraseña
-        const hashedPassword = await bcrypt.hash(contrasena, 10);
+    // Hashear contraseña
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(contrasena, saltRounds);
 
-        const result = await db.query(
-            'UPDATE Usuario SET contrasena = $1, nombre = $2 WHERE idUsuario = $3',
-            [hashedPassword, nombre, id]
-        );
+    // Insertar usuario
+    const result = await db.query(
+      'INSERT INTO Usuario (nombre, correo, contrasena, rol) VALUES ($1, $2, $3, $4) RETURNING idUsuario, nombre, correo, rol',
+      [nombre, correo, hashedPassword, rol]
+    );
 
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: 'Usuario no encontrado' });
-        }
-
-        res.json({ message: 'Contraseña actualizada exitosamente' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    res.status(201).json({
+      message: 'Usuario creado exitosamente',
+      usuario: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Error al crear usuario:', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
 
+// PUT: Actualizar usuario (incluyendo contraseña)
+app.put('/api/usuarios/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const { nombre, correo, contrasena, rol } = req.body;
+
+  // Solo el propio usuario o un admin puede modificar
+  if (req.user.rol !== 'admin' && req.user.idUsuario !== parseInt(id)) {
+    return res.status(403).json({ error: 'No tienes permiso para modificar este usuario' });
+  }
+
+  try {
+    // Verificar si el usuario existe
+    const userExists = await db.query(
+      'SELECT idUsuario FROM Usuario WHERE idUsuario = $1',
+      [id]
+    );
+    
+    if (userExists.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Si se está cambiando el correo, verificar que no exista otro usuario con el mismo correo
+    if (correo) {
+      const emailExists = await db.query(
+        'SELECT idUsuario FROM Usuario WHERE correo = $1 AND idUsuario != $2',
+        [correo, id]
+      );
+      
+      if (emailExists.rows.length > 0) {
+        return res.status(409).json({ error: 'El correo ya está en uso por otro usuario' });
+      }
+    }
+
+    // Construir la consulta dinámicamente según los campos proporcionados
+    let query = 'UPDATE Usuario SET';
+    const values = [];
+    let paramCount = 1;
+
+    if (nombre) {
+      query += ` nombre = $${paramCount},`;
+      values.push(nombre);
+      paramCount++;
+    }
+
+    if (correo) {
+      query += ` correo = $${paramCount},`;
+      values.push(correo);
+      paramCount++;
+    }
+
+    if (contrasena) {
+      if (contrasena.length < 6) {
+        return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+      }
+      const hashedPassword = await bcrypt.hash(contrasena, 10);
+      query += ` contrasena = $${paramCount},`;
+      values.push(hashedPassword);
+      paramCount++;
+    }
+
+    if (rol && req.user.rol === 'admin') {
+      query += ` rol = $${paramCount},`;
+      values.push(rol);
+      paramCount++;
+    }
+
+    // Eliminar la última coma y agregar la condición WHERE
+    query = query.slice(0, -1) + ` WHERE idUsuario = $${paramCount} RETURNING idUsuario, nombre, correo, rol`;
+    values.push(id);
+
+    const result = await db.query(query, values);
+
+    res.json({
+      message: 'Usuario actualizado exitosamente',
+      usuario: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Error al actualizar usuario:', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// DELETE: Eliminar usuario (solo admin)
+app.delete('/api/usuarios/:id', verifyToken, verifyRole('admin'), async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Verificar si el usuario existe
+    const userExists = await db.query(
+      'SELECT idUsuario FROM Usuario WHERE idUsuario = $1',
+      [id]
+    );
+    
+    if (userExists.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Eliminar usuario
+    await db.query('DELETE FROM Usuario WHERE idUsuario = $1', [id]);
+
+    res.json({ message: 'Usuario eliminado exitosamente' });
+  } catch (err) {
+    console.error('Error al eliminar usuario:', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
 
 //=================== Login =========================
 
-// Login con jwt 
+// Login
 app.post('/api/login', async (req, res) => {
-  console.log('Petición login recibida');           // <-- Log para indicar que entró la petición
-  console.log('Datos recibidos:', req.body);        // <-- Log para mostrar qué datos recibiste
-  
- const { correo, email, contrasena, password } = req.body;
+  const { correo, contrasena } = req.body;
 
-// Normalizamos
-const userEmail = correo || email;
-const userPass = contrasena || password;
-
-try {
-  const result = await db.query(
-    'SELECT * FROM Usuario WHERE correo = $1',
-    [userEmail]
-  );
-
-  console.log('Usuario encontrado:', result.rows[0]);
-
-  if (result.rows.length === 0) {
-    return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
+  if (!correo || !contrasena) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Correo y contraseña son requeridos' 
+    });
   }
 
-  const user = result.rows[0];
-  const match = await bcrypt.compare(userPass, user.contrasena);
-  console.log('¿Contraseña válida?', match);
+  try {
+    const result = await db.query(
+      'SELECT * FROM Usuario WHERE correo = $1',
+      [correo]
+    );
 
-  if (!match) {
-    return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
+    if (result.rows.length === 0) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Credenciales inválidas' 
+      });
+    }
+
+    const user = result.rows[0];
+    const match = await bcrypt.compare(contrasena, user.contrasena);
+
+    if (!match) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Credenciales inválidas' 
+      });
+    }
+
+    const token = jwt.sign(
+      { 
+        idUsuario: user.idusuario, 
+        correo: user.correo, 
+        rol: user.rol 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({ 
+      success: true, 
+      token,
+      user: {
+        idUsuario: user.idusuario,
+        nombre: user.nombre,
+        correo: user.correo,
+        rol: user.rol
+      }
+    });
+  } catch (err) {
+    console.error('Error en login:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error interno del servidor' 
+    });
   }
-
-  const token = jwt.sign(
-    { idUsuario: user.idusuario, correo: user.correo, rol: user.rol },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
-
-  res.json({ success: true, token });
-} catch (err) {
-  console.error('Error en login:', err);
-  res.status(500).json({ error: err.message });
-}
 });
 //========================Singup===================
 app.post('/api/signup', async (req, res) => {
