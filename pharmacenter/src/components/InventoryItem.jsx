@@ -98,7 +98,7 @@ const InventoryItem = ({ item, onChanged }) => {
           onClick={handleRename}
           disabled={renaming}
           style={{
-            backgroundColor: renaming ? '#95a5a6' : '#3498db',
+            backgroundColor: renaming ? '#a29baf' : '#7d5ba6', // morado base
             border: 'none',
             color: 'white',
             padding: '6px 12px',
@@ -108,10 +108,10 @@ const InventoryItem = ({ item, onChanged }) => {
             transition: 'background-color 0.2s ease, transform 0.1s ease'
           }}
           onMouseOver={(e) => {
-            if (!renaming) e.currentTarget.style.backgroundColor = '#2980b9'
+            if (!renaming) e.currentTarget.style.backgroundColor = '#674a8a' // más oscuro en hover
           }}
           onMouseOut={(e) => {
-            if (!renaming) e.currentTarget.style.backgroundColor = '#3498db'
+            if (!renaming) e.currentTarget.style.backgroundColor = '#7d5ba6'
           }}
           onMouseDown={(e) => {
             if (!renaming) e.currentTarget.style.transform = 'scale(0.96)'
@@ -123,6 +123,7 @@ const InventoryItem = ({ item, onChanged }) => {
           {renaming ? 'Guardando…' : '✏️ Renombrar'}
         </button>
       </td>
+
 
     </tr>
   )
