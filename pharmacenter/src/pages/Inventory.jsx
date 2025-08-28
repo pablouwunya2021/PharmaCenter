@@ -31,7 +31,7 @@ const Inventory = () => {
       <div className="inventory-page">
         {/* SOLO una tabla */}
         <InventoryTable items={items} onChanged={fetchItems} />
-        {/* El formulario de agregar permanece visible */}
+        {}
         <AddMedicationForm onAdd={fetchItems} />
       </div>
     </>
