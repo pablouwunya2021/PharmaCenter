@@ -27,7 +27,7 @@ const Inventory = () => {
 
   return (
     <>
-      <Header />
+      
       <div className="inventory-page">
         {/* SOLO una tabla */}
         <InventoryTable items={items} onChanged={fetchItems} />
