@@ -1,56 +1,59 @@
-import React, { useRef, useEffect } from 'react';
-import '../styles/Cart.css';
-import { useCart } from '../context/CartContext';
-import CartItemList from '../components/CartItemList';
-import CartTotal from '../components/CartTotal';
-import ClearCartButton from "../components/ClearCartButton";
-import Header from '../components/Header';
+import React, { useRef, useEffect } from 'react'
+import compraBg from '../assets/compra.png'
+import '../styles/Cart.css'
+
+import { useCart } from '../context/CartContext'
+import CartItemList from '../components/CartItemList'
+import CartTotal from '../components/CartTotal'
+import ClearCartButton from '../components/ClearCartButton'
+import { Link } from 'react-router-dom'
 
 const Cart = () => {
-  const { cartItems, total } = useCart();
-  const lastItemRef = useRef(null);
+  const { cartItems, total } = useCart()
+  const lastItemRef = useRef(null)
 
   useEffect(() => {
     if (lastItemRef.current) {
-      lastItemRef.current.scrollIntoView({ behavior: 'smooth' });
+      lastItemRef.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [cartItems]);
+  }, [cartItems])
 
   return (
-    <>
-
-      <div style={{ padding: "2rem" }}>
-        <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-          Carrito de Compras
-        </h2>
+    <main
+      className="cart-page"
+      style={{
+        backgroundImage: `url(${compraBg})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+      }}
+    >
+      <div className="cart-container">
+        <h2 className="cart-title">Carrito de Compras</h2>
 
         {cartItems.length === 0 ? (
-          <p className="empty" style={{ textAlign: "center", marginTop: "2rem" }}>
-            Tu carrito está vacío.
-          </p>
+          <div className="empty-state">
+            <p className="empty-message">🛒 Tu carrito está vacío.</p>
+            <Link to="/">
+              <button className="empty-button">Volver al catálogo</button>
+            </Link>
+          </div>
         ) : (
-          <div
-            className="cart-container"
-            style={{
-              backgroundColor: "#ffe2e2",
-              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.15)",
-              borderRadius: "12px",
-              padding: "1.5rem",
-              display: "flex",
-              gap: "2rem",
-              maxWidth: "1100px",
-              margin: "0 auto"
-            }}
-          >
-            <CartItemList items={cartItems} lastItemRef={lastItemRef} />
-            <CartTotal total={total} />
-            <ClearCartButton />
+          <div className="cart-grid">
+            <section className="items-section">
+              <CartItemList items={cartItems} lastItemRef={lastItemRef} />
+            </section>
+
+            <aside className="summary-section">
+              <CartTotal total={total} />
+              <ClearCartButton />
+            </aside>
           </div>
         )}
       </div>
-    </>
-  );
-};
+    </main>
+  )
+}
 
-export default Cart;
-
+export default Cart
