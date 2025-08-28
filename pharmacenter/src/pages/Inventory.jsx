@@ -4,30 +4,37 @@ import AddMedicationForm from '../components/AddMedicationForm'
 import '../styles/Inventory.css'
 import Header from '../components/Header'
 
+const API = 'http://localhost:3000'
+
 const Inventory = () => {
   const [items, setItems] = useState([])
 
   const fetchItems = useCallback(async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/medicamentos')
+      const res = await fetch(`${API}/api/medicamentos`)
       if (!res.ok) throw new Error(res.status)
       const data = await res.json()
       setItems(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Error cargando inventario:', err)
+      setItems([])
     }
   }, [])
 
-  useEffect(fetchItems, [fetchItems])
+  useEffect(() => {
+    fetchItems()
+  }, [fetchItems])
 
   return (
-      <>
-       <Header />
-       <div className="inventory-page">
-          <InventoryTable items={items} />
-          <AddMedicationForm onAdd={fetchItems} />
+    <>
+      <Header />
+      <div className="inventory-page">
+        {/* SOLO una tabla */}
+        <InventoryTable items={items} onChanged={fetchItems} />
+        {/* El formulario de agregar permanece visible */}
+        <AddMedicationForm onAdd={fetchItems} />
       </div>
-      </>
+    </>
   )
 }
 
