@@ -1,7 +1,7 @@
 import React from 'react'
 import InventoryItem from './InventoryItem'
 
-const InventoryList = ({ items }) => (
+const InventoryList = ({ items, onChanged }) => (
   <table className="inventory-table">
     <thead>
       <tr>
@@ -12,11 +12,16 @@ const InventoryList = ({ items }) => (
         <th>Costo</th>
         <th>Proveedor</th>
         <th>Imagen</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      {items.map(item => (
-        <InventoryItem key={item.idMedicamento} item={item} />
+      {items.map((item) => (
+        <InventoryItem
+          key={item.idmedicamento || item.idMedicamento || item.nombre}
+          item={item}
+          onChanged={onChanged}
+        />
       ))}
     </tbody>
   </table>
