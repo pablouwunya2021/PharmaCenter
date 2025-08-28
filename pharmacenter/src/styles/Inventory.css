@@ -2,17 +2,13 @@
   padding-top: 100px; 
   display: grid;
   gap: 2rem;
-  
 }
-
-
 
 @media (min-width: 768px) {
   .inventory-page {
     grid-template-columns: 2fr 1fr;
   }
 }
-
 
 .card {
   background: #fff;
@@ -65,4 +61,21 @@
   border: none;
   cursor: pointer;
   font-size: 1rem;
+}
+
+/* --- ACCIONES (asegura que se vean Renombrar y Eliminar) --- */
+.inventory-table th:last-child,
+.inventory-table td.actions-cell {
+  width: 260px;              /* ajusta si quieres más/menos */
+}
+
+.actions-cell {
+  display: flex;
+  gap: 10px;
+  justify-content: center;   /* o 'flex-start' si prefieres alineado a la izquierda */
+  flex-wrap: wrap;           /* en móvil bajan a otra línea */
+}
+
+.actions-cell button {
+  white-space: nowrap;       /* evita cortes de texto en los botones */
 }
