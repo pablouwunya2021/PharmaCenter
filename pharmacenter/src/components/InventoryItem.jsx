@@ -94,10 +94,36 @@ const InventoryItem = ({ item, onChanged }) => {
       <td>{proveedor}</td>
       <td>{imagenurl ? <img src={imagenurl} alt={nombre} /> : '—'}</td>
       <td>
-        <button onClick={handleRename} disabled={renaming}>
-          {renaming ? 'Guardando…' : 'Renombrar'}
+        <button
+          onClick={handleRename}
+          disabled={renaming}
+          style={{
+            backgroundColor: renaming ? '#95a5a6' : '#3498db',
+            border: 'none',
+            color: 'white',
+            padding: '6px 12px',
+            borderRadius: '4px',
+            cursor: renaming ? 'not-allowed' : 'pointer',
+            fontSize: '0.9rem',
+            transition: 'background-color 0.2s ease, transform 0.1s ease'
+          }}
+          onMouseOver={(e) => {
+            if (!renaming) e.currentTarget.style.backgroundColor = '#2980b9'
+          }}
+          onMouseOut={(e) => {
+            if (!renaming) e.currentTarget.style.backgroundColor = '#3498db'
+          }}
+          onMouseDown={(e) => {
+            if (!renaming) e.currentTarget.style.transform = 'scale(0.96)'
+          }}
+          onMouseUp={(e) => {
+            if (!renaming) e.currentTarget.style.transform = 'scale(1)'
+          }}
+        >
+          {renaming ? 'Guardando…' : '✏️ Renombrar'}
         </button>
       </td>
+
     </tr>
   )
 }
