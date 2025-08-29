@@ -1,7 +1,7 @@
 .cart-button-container {
   position: absolute;
-  left: 80%;
-  top: 100%;
+  left: 85%;
+  top: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
 }

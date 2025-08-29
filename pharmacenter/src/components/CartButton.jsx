@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/CartButton.css'; // Asegúrate de que el path sea correcto
+import '../styles/CartButton.css';
 
 const CartButton = () => {
   const navigate = useNavigate();
