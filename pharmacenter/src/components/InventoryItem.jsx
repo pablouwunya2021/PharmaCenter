@@ -21,6 +21,7 @@ const InventoryItem = ({ item, onChanged }) => {
   const [localNombre, setLocalNombre] = useState(nombre)
   const [localQuantity, setLocalQuantity] = useState(cantidadinventario)
   const [tempQuantity, setTempQuantity] = useState(cantidadinventario)
+  const [isRowHovered, setIsRowHovered] = useState(false)
 
   const fechaLegible = (() => {
     try {
@@ -156,6 +157,7 @@ const InventoryItem = ({ item, onChanged }) => {
     }
   }
 
+  /* ---------- ELIMINAR ---------- */
   const handleDelete = async () => {
     if (!window.confirm(`¿Eliminar "${localNombre}" del inventario?`)) return
     try {
@@ -176,6 +178,7 @@ const InventoryItem = ({ item, onChanged }) => {
     }
   }
 
+  /* ---------- ESTILOS ---------- */
   const btn = {
     border: 'none',
     color: '#fff',
@@ -219,9 +222,14 @@ const InventoryItem = ({ item, onChanged }) => {
   }
 
   return (
-    <tr className="inventory-row">
+    <tr 
+      className="inventory-row"
+      onMouseEnter={() => setIsRowHovered(true)}
+      onMouseLeave={() => setIsRowHovered(false)}
+    >
       <td>{localNombre}</td>
       
+      {/* COLUMNA DE CANTIDAD CON CONTROLES */}
       <td>
         {editingQuantity ? (
           <input
@@ -248,35 +256,37 @@ const InventoryItem = ({ item, onChanged }) => {
               {updatingQuantity ? '...' : localQuantity}
             </span>
             
-            <div className="quantity-arrows" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <button
-                onClick={() => handleQuantityChange(1)}
-                disabled={updatingQuantity || renaming || deleting}
-                style={{
-                  ...arrowButtonStyle,
-                  height: '18px',
-                  fontSize: '10px'
-                }}
-                onMouseOver={(e) => !updatingQuantity && (e.target.style.backgroundColor = '#5a4178')}
-                onMouseOut={(e) => !updatingQuantity && (e.target.style.backgroundColor = '#70589a')}
-              >
-                ▲
-              </button>
-              
-              <button
-                onClick={() => handleQuantityChange(-1)}
-                disabled={updatingQuantity || renaming || deleting}
-                style={{
-                  ...arrowButtonStyle,
-                  height: '18px',
-                  fontSize: '10px'
-                }}
-                onMouseOver={(e) => !updatingQuantity && (e.target.style.backgroundColor = '#5a4178')}
-                onMouseOut={(e) => !updatingQuantity && (e.target.style.backgroundColor = '#70589a')}
-              >
-                ▼
-              </button>
-            </div>
+            {isRowHovered && !editingQuantity && (
+              <div className="quantity-arrows" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <button
+                  onClick={() => handleQuantityChange(1)}
+                  disabled={updatingQuantity || renaming || deleting}
+                  style={{
+                    ...arrowButtonStyle,
+                    height: '18px',
+                    fontSize: '10px'
+                  }}
+                  onMouseOver={(e) => !updatingQuantity && (e.target.style.backgroundColor = '#5a4178')}
+                  onMouseOut={(e) => !updatingQuantity && (e.target.style.backgroundColor = '#70589a')}
+                >
+                  ▲
+                </button>
+                
+                <button
+                  onClick={() => handleQuantityChange(-1)}
+                  disabled={updatingQuantity || renaming || deleting}
+                  style={{
+                    ...arrowButtonStyle,
+                    height: '18px',
+                    fontSize: '10px'
+                  }}
+                  onMouseOver={(e) => !updatingQuantity && (e.target.style.backgroundColor = '#5a4178')}
+                  onMouseOut={(e) => !updatingQuantity && (e.target.style.backgroundColor = '#70589a')}
+                >
+                  ▼
+                </button>
+              </div>
+            )}
           </div>
         )}
       </td>
