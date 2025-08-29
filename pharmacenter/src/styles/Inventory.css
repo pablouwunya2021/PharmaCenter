@@ -1,40 +1,31 @@
-.inventory-page {
-  padding-top: 100px; 
-  display: grid;
-  gap: 2rem;
+.inventory-table tbody tr {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  transform-origin: center;
+  position: relative;
+  cursor: pointer;
 }
 
-@media (min-width: 768px) {
-  .inventory-page {
-    grid-template-columns: 2fr 1fr;
-  }
+.inventory-table tbody tr:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 20px rgba(112, 88, 154, 0.25);
+  background-color: #faf9fc !important; /* Override del nth-child */
+  z-index: 5;
 }
 
-.card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  padding: 1.5rem;
-}
-
-/* Estilos de la tabla */
-.inventory-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.inventory-table th {
-  background: #70589a;
-  color: #fff;
-  text-align: left;
-  padding: 0.75rem;
-}
-.inventory-table td {
-  padding: 0.75rem;
-  border-bottom: 1px solid #eee;
-}
 .inventory-table tbody tr:nth-child(even) {
   background: #f9f7fd;
 }
+
+.inventory-table tbody tr:nth-child(even):hover {
+  background-color: #f5f2fb !important;
+}
+
+.inventory-table thead tr:hover {
+  transform: none;
+  box-shadow: none;
+  cursor: default;
+}
+
 .inventory-table img {
   max-width: 60px;
   max-height: 60px;
@@ -42,11 +33,11 @@
   border-radius: 4px;
 }
 
-/* Estilos del formulario */
 .add-med-form h2 {
   margin-bottom: 1rem;
   color: #70589a;
 }
+
 .add-med-form input,
 .add-med-form button {
   width: 100%;
@@ -55,6 +46,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
 .add-med-form button {
   background: #70589a;
   color: #fff;
@@ -63,19 +55,28 @@
   font-size: 1rem;
 }
 
-/* --- ACCIONES (asegura que se vean Renombrar y Eliminar) --- */
 .inventory-table th:last-child,
 .inventory-table td.actions-cell {
-  width: 260px;              /* ajusta si quieres más/menos */
+  width: 260px;
 }
 
 .actions-cell {
   display: flex;
   gap: 10px;
-  justify-content: center;   /* o 'flex-start' si prefieres alineado a la izquierda */
-  flex-wrap: wrap;           /* en móvil bajan a otra línea */
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .actions-cell button {
-  white-space: nowrap;       /* evita cortes de texto en los botones */
+  white-space: nowrap;
+  position: relative;
+  z-index: 6;
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .inventory-table tbody tr:hover {
+    transform: scale(1.015);
+    box-shadow: 0 4px 12px rgba(112, 88, 154, 0.2);
+  }
 }
