@@ -1,7 +1,18 @@
 {
+  "scripts": {
+    "migrate:up": "node database/scripts/migrate-up.js",
+    "migrate:down": "node database/scripts/migrate-down.js",
+    "migrate:down:to": "node database/scripts/migrate-down.js to",
+    "migrate:status": "node database/scripts/migrate-up.js status",
+    "migrate:create": "node database/scripts/create-migration.js",
+    "migrate:reset": "npm run migrate:down:to 000 && npm run migrate:up",
+    "db:seed": "node database/scripts/seed.js",
+    "db:reset": "npm run migrate:reset && npm run db:seed"
+  },
   "dependencies": {
     "lucide-react": "^0.525.0",
     "module": "^1.0.0",
+    "pg": "^8.16.3",
     "react-router-dom": "^7.7.0"
   },
   "devDependencies": {
