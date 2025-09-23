@@ -27,10 +27,15 @@ services:
       DB_PASSWORD: pharma_password123
       DB_NAME: pharmacenter_db
       DB_PORT: 5432
+      JWT_SECRET: mi_clave_secreta_jwt_muy_segura_para_pharmacenter_2024_cambiar_en_produccion
+      NODE_ENV: development
     depends_on:
       - postgres
     networks:
       - pharmanetwork
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
 
   frontend:
     build: ./pharmacenter

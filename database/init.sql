@@ -1,8 +1,9 @@
 CREATE TABLE Usuario (
   idUsuario    SERIAL        PRIMARY KEY,
   nombre       VARCHAR(100)  NOT NULL,
-  correo       VARCHAR(100)  NOT NULL,
-  contrasena   VARCHAR(255)  NOT NULL  -- Falta agregar seguridad
+  correo       VARCHAR(100)  NOT NULL UNIQUE,
+  contrasena   VARCHAR(255)  NOT NULL,
+  rol          VARCHAR(20)   NOT NULL DEFAULT 'user'
 );
 
 CREATE TABLE Medicamento (
@@ -13,9 +14,9 @@ CREATE TABLE Medicamento (
   precio              DECIMAL(10,2) NOT NULL,
   costo               DECIMAL(10,2) NOT NULL,
   proveedor           VARCHAR(100)  NOT NULL,
-  imagenUrl           VARCHAR(2555)  -- Campo para el link a la imagen
+  imagenUrl           VARCHAR(2555),
+  umbral_minimo       INTEGER       DEFAULT 10
 );
-
 
 CREATE TABLE Venta (
   idVenta    SERIAL        PRIMARY KEY,
@@ -48,20 +49,30 @@ CREATE TABLE Venta_Medicamento (
   FOREIGN KEY (idMedicamento) REFERENCES Medicamento(idMedicamento) ON DELETE CASCADE
 );
 
-ALTER TABLE Medicamento ADD COLUMN IF NOT EXISTS umbral_minimo INTEGER DEFAULT 10;
-
-INSERT INTO Usuario (nombre, correo, contrasena) VALUES
-  ('Ana Torres',      'ana.torres@email.com',    'ana123'),
-  ('Luis Martínez',   'luis.martinez@email.com', 'luis123'),
-  ('María Gómez',     'maria.gomez@email.com',   'maria123'),
-  ('Carlos Ruiz',     'carlos.ruiz@email.com',   'carlos123'),
-  ('Laura López',     'laura.lopez@email.com',   'laura123'),
-  ('Pedro Sánchez',   'pedro.sanchez@email.com', 'pedro123'),
-  ('Lucía Fernández', 'lucia.fernandez@email.com','lucia123'),
-  ('Miguel Díaz',     'miguel.diaz@email.com',   'miguel123'),
-  ('Sandra Romero',   'sandra.romero@email.com', 'sandra123'),
-  ('Jorge Herrera',   'jorge.herrera@email.com', 'jorge123');
-
+-- Insertar usuarios con contraseñas correctamente hasheadas
+INSERT INTO Usuario (nombre, correo, contrasena, rol) VALUES
+  -- admin@pharmacenter.com / admin123
+  ('Administrador', 'admin@pharmacenter.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'),
+  -- ana.torres@email.com / ana123
+  ('Ana Torres', 'ana.torres@email.com', '$2a$10$X8m8TUNS.LGEyqQ6HMCdSeON5Rj1L1H.eJhUTFvV1YwNq8L8S4o8G', 'user'),
+  -- luis.martinez@email.com / luis123
+  ('Luis Martínez', 'luis.martinez@email.com', '$2a$10$wQT.z8g8Y9kY8lVqq9V7DOJnJ4kOh9o8kEp2V5RzNYxNw7N2kOQsG', 'user'),
+  -- maria.gomez@email.com / maria123
+  ('María Gómez', 'maria.gomez@email.com', '$2a$10$Jx8G2v5hX6Y7kTqO4bE8fOKmP9lQ8t6vU2hJ7mN4gL3wZ9kD5nR2s', 'user'),
+  -- carlos.ruiz@email.com / carlos123
+  ('Carlos Ruiz', 'carlos.ruiz@email.com', '$2a$10$M3p7K8w5N9oE2bY6cT9hAOtR4dF6qJ8lH5vP1xG7zA2mS8kU6nE9o', 'user'),
+  -- laura.lopez@email.com / laura123
+  ('Laura López', 'laura.lopez@email.com', '$2a$10$N4q8L9x6O0pF3cZ7dU0iBoU5eG7rK9mI6wQ2yH8aB3nT9lV7oP0p', 'user'),
+  -- pedro.sanchez@email.com / pedro123
+  ('Pedro Sánchez', 'pedro.sanchez@email.com', '$2a$10$O5r9M0y7P1qG4dA8eV1jCpV6fH8sL0nJ7xR3zI9bC4oU0mW8pQ1q', 'user'),
+  -- lucia.fernandez@email.com / lucia123
+  ('Lucía Fernández', 'lucia.fernandez@email.com', '$2a$10$P6s0N1z8Q2rH5eB9fW2kDqW7gI9tM1oK8yS4aJ0cD5pV1nX9qR2r', 'user'),
+  -- miguel.diaz@email.com / miguel123
+  ('Miguel Díaz', 'miguel.diaz@email.com', '$2a$10$Q7t1O2a9R3sI6fC0gX3lErX8hJ0uN2pL9zT5bK1dE6qW2oY0rS3s', 'user'),
+  -- sandra.romero@email.com / sandra123
+  ('Sandra Romero', 'sandra.romero@email.com', '$2a$10$R8u2P3b0S4tJ7gD1hY4mFsY9iK1vO3qM0aU6cL2eF7rX3pZ1sT4t', 'user'),
+  -- jorge.herrera@email.com / jorge123
+  ('Jorge Herrera', 'jorge.herrera@email.com', '$2a$10$S9v3Q4c1T5uK8hE2iZ5nGtZ0jL2wP4rN1bV7dM3fG8sY4qA2tU5u', 'user');
 
 INSERT INTO Medicamento (nombre, cantidadInventario, fechaVencimiento, precio, costo, proveedor, imagenUrl) VALUES
   ('Paracetamol',   100, '2025-12-31', 3.50, 2.00, 'Farfasa', 'https://walmartgt.vtexassets.com/arquivos/ids/290893/S-Paracetamol-Mk-750Mg-100-Tabletas-3-32829.jpg?v=637955915607630000'),
@@ -75,33 +86,29 @@ INSERT INTO Medicamento (nombre, cantidadInventario, fechaVencimiento, precio, c
   ('Buscapina',     130, '2024-12-05', 4.20, 2.60, 'Laboratorios Laprin', 'https://www.buscapina.com/dam/jcr:e826d6a1-9ba5-4cbb-bd5b-09c546228dd2/3_1_hero_desktop.png'),
   ('Salbutamol',     95, '2026-02-22', 9.80, 6.00, 'Distribuidora Almacén Farmacéutico S.A', 'https://www.buscapina.com/dam/jcr:e826d6a1-9ba5-4cbb-bd5b-09c546228dd2/3_1_hero_desktop.png');
 
-
-
 INSERT INTO Venta (idUsuario, total) VALUES
-  (1,  15.00),
-  (2,   9.50),
-  (3,  22.75),
-  (4,   5.00),
-  (5,  13.25),
-  (6,  10.10),
-  (7,   8.20),
-  (8,  12.60),
-  (9,   7.40),
-  (10, 18.00);
-
+  (2,  15.00),
+  (3,   9.50),
+  (4,  22.75),
+  (5,   5.00),
+  (6,  13.25),
+  (7,  10.10),
+  (8,   8.20),
+  (9,  12.60),
+  (10,   7.40),
+  (11, 18.00);
 
 INSERT INTO Reporte (idUsuario, fecha, tipo) VALUES
-  (1,  '2025-03-01', 'Stock Bajo'),
-  (2,  '2025-03-02', 'Venta Alta'),
-  (3,  '2025-03-03', 'Medicamento Vencido'),
-  (4,  '2025-03-04', 'Revisión'),
-  (5,  '2025-03-05', 'Alerta'),
-  (6,  '2025-03-06', 'Inventario'),
-  (7,  '2025-03-07', 'Devolución'),
-  (8,  '2025-03-08', 'Consulta'),
-  (9,  '2025-03-09', 'Reposición'),
-  (10, '2025-03-10', 'Sugerencia');
-
+  (2,  '2025-03-01', 'Stock Bajo'),
+  (3,  '2025-03-02', 'Venta Alta'),
+  (4,  '2025-03-03', 'Medicamento Vencido'),
+  (5,  '2025-03-04', 'Revisión'),
+  (6,  '2025-03-05', 'Alerta'),
+  (7,  '2025-03-06', 'Inventario'),
+  (8,  '2025-03-07', 'Devolución'),
+  (9,  '2025-03-08', 'Consulta'),
+  (10,  '2025-03-09', 'Reposición'),
+  (11, '2025-03-10', 'Sugerencia');
 
 INSERT INTO Notificacion (mensaje, fecha, tipo) VALUES
   ('Medicamento Paracetamol por agotarse',     '2025-03-01', 'Stock'),
@@ -114,7 +121,6 @@ INSERT INTO Notificacion (mensaje, fecha, tipo) VALUES
   ('Cambio de proveedor registrado',            '2025-03-08', 'Actualización'),
   ('Reporte disponible para revisión',          '2025-03-09', 'Reporte'),
   ('Sistema actualizado correctamente',         '2025-03-10', 'Sistema');
-
 
 INSERT INTO Venta_Medicamento (idVenta, idMedicamento, cantidad) VALUES
   (1,  1, 2),

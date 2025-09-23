@@ -1,0 +1,13 @@
+# Base de datos
+DB_HOST=localhost
+DB_PORT=5433
+DB_NAME=pharmacenter_db
+DB_USER=pharma_user
+DB_PASSWORD=pharma_password123
+
+# JWT Secret (¡CAMBIAR EN PRODUCCIÓN!)
+JWT_SECRET=clave
+
+# Environment
+NODE_ENV=development
+

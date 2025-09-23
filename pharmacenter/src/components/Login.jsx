@@ -51,19 +51,14 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    
-    // Temporal: Verificación de credenciales hardcodeadas
-    if (formData.email === 'pharma@gmail.com' && formData.password === 'hola123') {
-      // Simulamos el almacenamiento de un token dummy
-      localStorage.setItem('token', 'dummy_token');
-      alert('¡Inicio de sesión exitoso!');
-      navigate('/inventory');
-    } else {
-      setErrors({ general: 'Credenciales incorrectas' });
-    }
+    setErrors({}); // Limpiar errores anteriores
 
-    /* Comentado temporalmente: Llamada a la API original
     try {
+      console.log('Enviando datos:', {
+        correo: formData.email,
+        contrasena: formData.password
+      });
+
       const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
         headers: {
@@ -75,26 +70,39 @@ const Login = () => {
         }),
       });
 
+      console.log('Status de respuesta:', response.status);
+      
       const data = await response.json();
+      console.log('Datos de respuesta:', data);
 
-      if (response.ok && data.token) {
-        // ✅ Aquí guardamos el token JWT recibido en localStorage o sessionStorage
+      if (response.ok && data.success && data.token) {
+        // ✅ Guardar el token JWT y la información del usuario
         localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
 
-        alert('¡Inicio de sesión exitoso!');
-        // Aquí podrías navegar a la ruta protegida
-        navigate('/inventory');
+        // Mostrar mensaje de éxito
+        alert(`¡Bienvenido ${data.user.nombre}!`);
+        
+        // Redirigir según el rol del usuario
+        if (data.user.rol === 'admin') {
+          navigate('/inventory', { replace: true }); // replace: true evita volver atrás
+        } else {
+          navigate('/', { replace: true }); // Usuario normal va al home
+        }
       } else {
-        // En caso de error, mostramos el mensaje que venga del backend o uno por defecto
-        setErrors({ general: data.message || 'Credenciales incorrectas' });
+        // Mostrar error del servidor
+        setErrors({ 
+          general: data.message || 'Credenciales incorrectas' 
+        });
       }
     } catch (error) {
       console.error('Error en el login:', error);
-      setErrors({ general: 'Error de conexión. Intenta nuevamente.' });
+      setErrors({ 
+        general: 'Error de conexión. Verifica que el servidor esté funcionando.' 
+      });
+    } finally {
+      setIsLoading(false);
     }
-    */
-
-    setIsLoading(false); // Movido fuera del finally para que funcione con la lógica temporal
   };
 
   return (
@@ -135,6 +143,24 @@ const Login = () => {
           <p style={{ color: '#70589a', fontWeight: '100', fontSize: '16px', margin: 0 }}>
             Farmacia Bethesda
           </p>
+        </div>
+
+        {/* Credenciales de prueba */}
+        <div 
+          style={{
+            backgroundColor: '#e8f5e8',
+            border: '1px solid #4caf50',
+            borderRadius: '8px',
+            padding: '15px',
+            marginBottom: '20px',
+            fontSize: '14px'
+          }}
+        >
+          <strong style={{ color: '#2e7d32' }}>Credenciales de prueba:</strong>
+          <br />
+          <strong>Admin:</strong> admin@pharmacenter.com / admin123
+          <br />
+          <strong>Usuario:</strong> ana.torres@email.com / ana123
         </div>
 
         {/* Formulario */}

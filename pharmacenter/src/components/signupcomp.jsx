@@ -23,7 +23,6 @@ const SignupComp = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    rol: 'user', // Rol por defecto
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -59,8 +58,8 @@ const SignupComp = () => {
 
     if (!formData.email.trim()) {
       newErrors.email = 'El correo electrónico es requerido';
-    } else if (!formData.email.includes('@')) {
-      newErrors.email = 'El correo debe contener @';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Por favor ingresa un correo válido';
     }
 
     if (!formData.password.trim()) {
@@ -83,7 +82,7 @@ const SignupComp = () => {
       setLoading(true);
       setServerMessage('');
 
-      // Llamada al backend
+      // Llamada al backend actualizada
       const response = await fetch('http://localhost:3000/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -91,7 +90,6 @@ const SignupComp = () => {
           nombre: formData.username,
           correo: formData.email,
           contrasena: formData.password,
-          rol: formData.rol,
         }),
       });
 
@@ -101,11 +99,29 @@ const SignupComp = () => {
         // Error desde backend
         setServerMessage(data.message || 'Error al crear usuario');
       } else {
-        // Éxito
-        setServerMessage('¡Usuario creado exitosamente!');
-        setTimeout(() => navigate('/login'), 1500); // Redirige tras 1.5s
+        // Éxito - el backend ya devuelve un token automáticamente
+        if (data.success && data.token) {
+          // Guardar token y datos del usuario
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          
+          setServerMessage(`¡Usuario creado exitosamente! Bienvenido ${data.user.nombre}`);
+          
+          // Redirigir después de 1.5 segundos
+          setTimeout(() => {
+            if (data.user.rol === 'admin') {
+              navigate('/inventory');
+            } else {
+              navigate('/');
+            }
+          }, 1500);
+        } else {
+          setServerMessage('Usuario creado exitosamente. Ahora puedes iniciar sesión.');
+          setTimeout(() => navigate('/login'), 1500);
+        }
       }
     } catch (err) {
+      console.error('Error en signup:', err);
       setServerMessage('Error de conexión con el servidor');
     } finally {
       setLoading(false);
@@ -116,6 +132,21 @@ const SignupComp = () => {
     <div className="signup-container">
       <div className="signup-form-container">
         <h2 className="signup-title">Crear Usuario</h2>
+
+        {/* Información sobre registro */}
+        <div 
+          style={{
+            backgroundColor: '#e3f2fd',
+            border: '1px solid #2196f3',
+            borderRadius: '8px',
+            padding: '15px',
+            marginBottom: '20px',
+            fontSize: '14px',
+            color: '#1976d2'
+          }}
+        >
+          <strong>Información:</strong> Los nuevos usuarios se registran con rol de usuario normal. Solo los administradores pueden crear otros administradores.
+        </div>
 
         <form className="signup-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -186,17 +217,49 @@ const SignupComp = () => {
 
           {/* Mensaje del backend */}
           {serverMessage && (
-            <div className="server-message">{serverMessage}</div>
+            <div 
+              className="server-message"
+              style={{
+                backgroundColor: serverMessage.includes('exitosamente') ? '#e8f5e8' : '#ffebee',
+                border: serverMessage.includes('exitosamente') ? '1px solid #4caf50' : '1px solid #e57373',
+                color: serverMessage.includes('exitosamente') ? '#2e7d32' : '#c62828',
+                padding: '12px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                fontSize: '14px'
+              }}
+            >
+              {serverMessage}
+            </div>
           )}
 
           <button type="submit" className="submit-button" disabled={loading}>
             {loading ? 'Creando...' : 'Crear Usuario'}
           </button>
         </form>
+
+        {/* Link al login */}
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <p style={{ fontSize: '14px', color: '#666' }}>
+            ¿Ya tienes cuenta?{' '}
+            <button
+              onClick={() => navigate('/login')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#5c3c92',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Inicia sesión aquí
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
 export default SignupComp;
-
