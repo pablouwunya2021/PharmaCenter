@@ -33,56 +33,29 @@ const SignupComp = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
-    }
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
-
-    // Validaciones cliente
-    if (!formData.username.trim()) {
-      newErrors.username = 'El nombre de usuario es requerido';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'El correo electrónico es requerido';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Por favor ingresa un correo válido';
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = 'La contraseña es requerida';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
-    }
-
-    if (!formData.confirmPassword.trim()) {
-      newErrors.confirmPassword = 'Confirmar contraseña es requerido';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden';
-    }
+    if (!formData.username.trim()) newErrors.username = 'El nombre de usuario es requerido';
+    if (!formData.email.trim()) newErrors.email = 'El correo electrónico es requerido';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Por favor ingresa un correo válido';
+    if (!formData.password.trim()) newErrors.password = 'La contraseña es requerida';
+    else if (formData.password.length < 6) newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
+    if (!formData.confirmPassword.trim()) newErrors.confirmPassword = 'Confirmar contraseña es requerido';
+    else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Las contraseñas no coinciden';
 
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length > 0) return;
 
     try {
       setLoading(true);
       setServerMessage('');
 
-      // Llamada al backend actualizada
       const response = await fetch('http://localhost:3000/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -90,34 +63,25 @@ const SignupComp = () => {
           nombre: formData.username,
           correo: formData.email,
           contrasena: formData.password,
+           rol: 'admin'   
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        // Error desde backend
         setServerMessage(data.message || 'Error al crear usuario');
       } else {
-        // Éxito - el backend ya devuelve un token automáticamente
-        if (data.success && data.token) {
-          // Guardar token y datos del usuario
+        if (data.success && data.token && data.user) {
+          // Guardar sesión si el backend la devuelve
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
-          
           setServerMessage(`¡Usuario creado exitosamente! Bienvenido ${data.user.nombre}`);
-          
-          // Redirigir después de 1.5 segundos
-          setTimeout(() => {
-            if (data.user.rol === 'admin') {
-              navigate('/inventory');
-            } else {
-              navigate('/');
-            }
-          }, 1500);
+          // 👉 Ir al Home siempre; el Header mostrará Inventario si es admin
+          setTimeout(() => navigate('/', { replace: true }), 1200);
         } else {
           setServerMessage('Usuario creado exitosamente. Ahora puedes iniciar sesión.');
-          setTimeout(() => navigate('/login'), 1500);
+          setTimeout(() => navigate('/login', { replace: true }), 1200);
         }
       }
     } catch (err) {
@@ -133,7 +97,6 @@ const SignupComp = () => {
       <div className="signup-form-container">
         <h2 className="signup-title">Crear Usuario</h2>
 
-        {/* Información sobre registro */}
         <div 
           style={{
             backgroundColor: '#e3f2fd',
@@ -238,7 +201,6 @@ const SignupComp = () => {
           </button>
         </form>
 
-        {/* Link al login */}
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <p style={{ fontSize: '14px', color: '#666' }}>
             ¿Ya tienes cuenta?{' '}
