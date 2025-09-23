@@ -1,0 +1,257 @@
+=== SAT Solver (Fuerza Bruta & DPLL) ===
+
+EJEMPLOS PARA PROBAR EN TERMINAL
+
+-------------------------------------------------
+1) p ∧ p
+Formato clausal: {{'p'}, {'p'}}
+
+Output esperado (Brute Force o DPLL):
+✅ La fórmula es SATISFACIBLE con asignación: {'p': True}
+
+-------------------------------------------------
+2) q ∨ p ∨ p
+Formato clausal: {{'q','p','p'}}
+
+Output esperado:
+✅ La fórmula es SATISFACIBLE con asignación: {'q': False, 'p': True}
+
+-------------------------------------------------
+3) (p ∨ r ∨ s) ∧ (q ∨ p ∨ s)
+Formato clausal: {{'p','r','s'}, {'q','p','s'}}
+
+Output esperado:
+✅ La fórmula es SATISFACIBLE con asignación: {'p': True, 'q': False, 'r': False, 's': False}
+
+-------------------------------------------------
+4) (p ∨ q) ∧ (q ∨ s) ∧ (p ∨ s) ∧ (q ∨ s)
+Formato clausal: {{'p','q'}, {'q','s'}, {'p','s'}, {'q','s'}}
+
+Output esperado:
+✅ La fórmula es SATISFACIBLE con asignación: {'q': True, 'p': False, 's': False}
+
+-------------------------------------------------
+5) (p ∨ q ∨ r) ∧ (q ∨ r ∨ p) ∧ (p ∨ q ∨ r)
+Formato clausal: {{'p','q','r'}, {'q','r','p'}, {'p','q','r'}}
+
+Output esperado:
+✅ La fórmula es SATISFACIBLE con asignación: {'p': True, 'q': False, 'r': False}
+
+-------------------------------------------------
+6) r ∧ (q ∨ r) ∧ (p ∨ q ∨ r) ∧ q
+Formato clausal: {{'r'}, {'q','r'}, {'p','q','r'}, {'q'}}
+
+Output esperado:
+✅ La fórmula es SATISFACIBLE con asignación: {'q': True, 'r': True, 'p': False}
+
+=== SAT Solver – Casos que pueden fallar o colgarse ===
+(para tu implementación actual de DPLL y parse_formula)
+
+NOTAS IMPORTANTES
+- Tu parse_formula usa eval: los literales DEBEN ir entre comillas simples: 'p', '-p', etc.
+- El simplificador tiene un bug cuando se pasa un literal NEGADO (conduce a comprobar '--p').
+  Eso puede impedir eliminar el literal opuesto de las cláusulas y provocar loops o resultados erróneos.
+- Aquí te dejo entradas y la SALIDA CORRECTA ESPERADA (teórica). Si tu programa difiere, hay bug.
+
+
+------------------------------------------------------------
+1) Contradicción directa (posible loop o resultado incorrecto)
+Entrada:
+{{'p'}, {'-p'}}
+
+Salida correcta esperada:
+❌ La fórmula es INSATISFACIBLE.
+
+Motivo del fallo:
+- En la rama p=False, simplify recibe '-p' y busca '--p' como opuesto, no 'p'. No elimina 'p' de {'p'}
+  y puede quedarse atascado repitiendo la misma cláusula.
+
+
+------------------------------------------------------------
+2) Unit propagation con eliminación del opuesto (puede atascarse)
+Entrada:
+{{'p','q'}, {'-p'}}
+
+Salida correcta esperada:
+✅ SAT con alguna asignación como: {'p': False, 'q': True}
+
+Motivo del fallo:
+- Con '-p' como cláusula unitaria, debería eliminar 'p' de {'p','q'} → queda {'q'} → fuerza q=True.
+  Debido al bug de '--p', 'p' no se elimina y el solver puede no propagar bien.
+
+
+------------------------------------------------------------
+3) Necesidad de propagar varias unitarias (puede colgarse)
+Entrada:
+{{'p','q'}, {'-p','r'}, {'-r'}, {'-q'}}
+
+Razonamiento correcto:
+- De {'-r'} → r=False
+- De {'-q'} → q=False
+- En {'-p','r'}, como r=False → queda {'-p'} → p=False
+- En {'p','q'}, con p=False y q=False → queda cláusula vacía ⇒ INSAT
+
+Salida correcta esperada:
+❌ La fórmula es INSATISFACIBLE.
+
+Motivo del fallo:
+- Eliminar el opuesto al asignar negativos es crítico; si no se hace, la derivación de la cláusula vacía puede no ocurrir.
+
+
+------------------------------------------------------------
+4) Tautología + contradicción (debe detectar INSAT por la otra parte)
+Entrada:
+{{'p','-p'}, {'q'}, {'-q'}}
+
+Salida correcta esperada:
+❌ La fórmula es INSATISFACIBLE.
+(La primera cláusula es siempre verdadera, pero {'q'} y {'-q'} se contradicen.)
+
+Motivo del fallo:
+- Aunque hay una tautología, el solver debe seguir y detectar la contradicción. Si se atasca con negativos, puede fallar.
+
+
+------------------------------------------------------------
+5) Clausula vacía explícita (formato válido pero requiere manejo)
+Entrada:
+{{}}
+
+Salida correcta esperada:
+❌ La fórmula es INSATISFACIBLE.
+
+Motivo de posible fallo:
+- Tu simplify devuelve None cuando una cláusula queda vacía en vez de mantener [] y dejar que DPLL detecte el conflicto.
+  Aunque tu DPLL verifica len==0, algunos caminos pueden “saltar” el conflicto si el None se usa para omitir la rama.
+
+
+------------------------------------------------------------
+6) Mezcla de signos con propagación posterior (riesgo con negativos)
+Entrada:
+{{'-p'}, {'q','p'}, {'r','-q'}}
+
+Salida correcta esperada (una posible):
+✅ SAT, por ejemplo: {'p': False, 'q': False, 'r': True}
+
+Motivo del fallo:
+- Asignar p=False (por {'-p'}) debería eliminar 'p' de {'q','p'} → queda {'q'}.
+  Si no se elimina 'p' correctamente (bug de '--p'), el solver no fuerza 'q' y puede explorar mal.
+
+
+------------------------------------------------------------
+7) Duplicados + negativos (no debería romper, pero puede evidenciar bug)
+Entrada:
+{{'q','p','p'}, {'-p'}}
+
+Salida correcta esperada:
+✅ SAT con: {'p': False, 'q': True}
+
+Motivo del fallo:
+- Igual que en (2), si no elimina 'p' de la primera cláusula cuando p=False, no forzará q=True.
+
+
+------------------------------------------------------------
+8) Fórmula satisfacible mínima con primer literal negativo (ruta crítica)
+Entrada:
+{{'-p'}, {'p','r'}}
+
+Salida correcta esperada:
+✅ SAT con: {'p': False, 'r': True}
+
+Motivo del fallo:
+- La presencia de un primer literal negativo hace más probable activar la ruta del bug ('--p').
+
+
+------------------------------------------------------------
+9) Contradicción escondida tras varias simplificaciones
+Entrada:
+{{'p','q'}, {'-p','q'}, {'p','-q'}, {'-p','-q'}}
+
+Razonamiento correcto:
+- Esta es la CNF de (p XOR q) AND (NOT (p XOR q))  → INSAT.
+  (Otra forma: todas las combinaciones están cubiertas con signos opuestos; no hay asignación válida.)
+
+Salida correcta esperada:
+❌ La fórmula es INSATISFACIBLE.
+
+Motivo del fallo:
+- Requiere eliminar opuestos correctamente varias veces. El bug con negativos puede impedir llegar a la contradicción.
+
+
+------------------------------------------------------------
+10) Problema de entrada (sin comillas) – parse_formula revienta con NameError
+Entrada (INCORRECTA por falta de comillas):
+{{p}, {'-p'}}
+
+Comportamiento real con tu parse_formula:
+⚠️ Error en el formato. Intente de nuevo.  (o NameError/Exception)
+
+Versión CORRECTA:
+{{'p'}, {'-p'}}
+
+
+------------------------------------------------------------
+11) Espacios y signos variados (debe tolerarlos)
+Entrada:
+{{'-p'}, {'p','q'}}
+
+Salida correcta esperada:
+✅ SAT con: {'p': False, 'q': True}
+
+Motivo del fallo:
+- Si el strip no quita bien espacios alrededor de signos, puede no reconocer '-p' como negado.
+
+
+------------------------------------------------------------
+12) Solo negativos (verifica manejo consistente)
+Entrada:
+{{'-p','-q'}, {'q'}}
+
+Salida correcta esperada:
+✅ SAT con: {'q': True, 'p': False}
+
+Motivo del fallo:
+- Asignar q=True elimina '-q' de la primera; si no se elimina bien el opuesto al evaluar ramas con negativos, puede fallar.
+
+
+------------------------------------------------------------
+13) Clausula con todos los literales negados (fácil pero sensible al bug)
+Entrada:
+{{'-p','-q','-r'}}
+
+Salida correcta esperada:
+✅ SAT, por ejemplo: {'p': False, 'q': False, 'r': False}
+
+Motivo del fallo:
+- Si elige un literal y explora la rama “falsa/negada”, debe simplificar correctamente lo opuesto en el resto.
+
+
+------------------------------------------------------------
+14) Fórmula vacía (truco clásico: debe ser SAT)
+Entrada:
+{}
+
+Salida correcta esperada:
+✅ La fórmula es SATISFACIBLE (trivialmente verdadera).
+
+Motivo del fallo:
+- El programa debe aceptar lista vacía tras el reemplazo {}→[] y reconocer el caso base.
+
+
+------------------------------------------------------------
+15) Requiere backtracking correcto (sin propagaciones equivocadas)
+Entrada:
+{{'p','q'}, {'-p','r'}, {'-q','r'}, {'-r'}}
+
+Razonamiento correcto:
+- {'-r'} → r=False
+- Entonces {'-p','r'} → {'-p'} → p=False
+- Entonces {'p','q'} → {'q'} → q=True
+- {'-q','r'} con r=False → {'-q'} → pero q=True ⇒ contradicción
+No hay forma consistente ⇒ INSAT
+
+Salida correcta esperada:
+❌ La fórmula es INSATISFACIBLE.
+
+Motivo del fallo:
+- Encadena varias eliminaciones del opuesto. Cualquier fallo con negativos descompone el razonamiento.
+
