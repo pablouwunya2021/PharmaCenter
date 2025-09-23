@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import CartButton from './CartButton';
+import './Header.css'; 
 
 function Header() {
   const [user, setUser] = useState(null);
@@ -73,29 +74,15 @@ function Header() {
       </nav>
 
       {/* Sección de usuario */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+      <div className="header-user-section">
         {isAuthenticated() ? (
           <>
             {/* Información del usuario */}
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '10px',
-              color: 'white',
-              fontSize: '14px'
-            }}>
-              <span>
+            <div className="header-user-info">
+              <span className="header-user-name">
                 Hola, {user.nombre}
                 {isAdmin() && (
-                  <span style={{ 
-                    backgroundColor: '#ff9800', 
-                    padding: '2px 6px', 
-                    borderRadius: '10px', 
-                    fontSize: '10px',
-                    marginLeft: '5px',
-                    color: 'white',
-                    fontWeight: 'bold'
-                  }}>
+                  <span className="header-admin-badge">
                     ADMIN
                   </span>
                 )}
@@ -103,18 +90,7 @@ function Header() {
               
               <button
                 onClick={handleLogout}
-                style={{
-                  backgroundColor: '#d32f2f',
-                  color: 'white',
-                  border: 'none',
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#b71c1c'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#d32f2f'}
+                className="header-logout-btn"
               >
                 Cerrar Sesión
               </button>
@@ -123,46 +99,21 @@ function Header() {
         ) : (
           <>
             {/* Usuario no autenticado */}
-            <Link
-              to="/login"
-              style={{
-                color: 'white',
-                textDecoration: 'none',
-                border: '1px solid white',
-                padding: '6px 12px',
-                borderRadius: '4px',
-                fontSize: '14px',
-                transition: 'all 0.3s'
-              }}
-              onMouseOver={(e) => {
-                e.target.style.backgroundColor = 'white';
-                e.target.style.color = '#5c3c92';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-                e.target.style.color = 'white';
-              }}
-            >
-              Iniciar Sesión
-            </Link>
+            <div className="header-auth-buttons">
+              <Link
+                to="/login"
+                className="header-login-btn"
+              >
+                Iniciar Sesión
+              </Link>
 
-            <Link
-              to="/signup"
-              style={{
-                backgroundColor: 'white',
-                color: '#5c3c92',
-                textDecoration: 'none',
-                padding: '6px 12px',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                transition: 'all 0.3s'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#f5f5f5'}
-              onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
-            >
-              Registrarse
-            </Link>
+              <Link
+                to="/signup"
+                className="header-signup-btn"
+              >
+                Registrarse
+              </Link>
+            </div>
           </>
         )}
       </div>
