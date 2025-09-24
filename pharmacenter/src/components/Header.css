@@ -39,7 +39,7 @@
   min-width: 44px;
   height: 44px;
   opacity: 0;
-  
+
 }
 
 .header #openSidebar:hover {
@@ -71,7 +71,7 @@
   text-decoration: none;
   color: inherit;
   font-size: 1.8rem;
-  font-weight: 600;
+  font-weight: 200;
   letter-spacing: -0.5px;
   margin: 0;
   transition: opacity 0.3s ease;
