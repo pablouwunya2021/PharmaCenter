@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import CartButton from './CartButton';
 import './Header.css';
+import logo from '../assets/logo.png'; // Asegúrate de que la ruta sea correcta
 
 function Header() {
   const [user, setUser] = useState(null);
@@ -46,29 +47,23 @@ function Header() {
 
   return (
     <header className="header">
-      <button id="openSidebar">&#9776;</button>
-
-      <h1 style={{ margin: 0 }}>
-        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-          Farmacia Bethesda
-        </Link>
-      </h1>
+      <div className="header-left">
+        <div className="header-brand">
+          <img src={logo} alt="Farmacia Bethesda" className="header-logo" />
+          <Link to="/" className="header-title">
+            Farmacia Bethesda
+          </Link>
+        </div>
+      </div>
 
       {/* Navegación central */}
-      <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+      <nav className="header-nav">
         {isAuthenticated && (
           <NavLink
             to="/admin"
             className={({ isActive }) =>
               `nav-pill ${isActive ? 'active' : ''}`
             }
-            style={{
-              textDecoration: 'none',
-              color: 'inherit',
-              padding: '8px 16px',
-              borderRadius: '10px',
-              backgroundColor: 'rgba(255,255,255,0.14)'
-            }}
           >
             Acceso a Panel
           </NavLink>
@@ -77,7 +72,7 @@ function Header() {
       </nav>
 
       {/* Sección usuario */}
-      <div className="header-user-section">
+      <div className="header-right">
         {isAuthenticated ? (
           <div className="header-user-info">
             <span className="header-user-name">

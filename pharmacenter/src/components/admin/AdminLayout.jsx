@@ -7,6 +7,10 @@ const IconBox = ({ color = '#7c56c6' }) => (
     <path d="M7 12h10M7 8h10M7 16h10" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
+const handleGoToHome = () => {
+  const navigate = useNavigate();
+  navigate('../pages/Home.jsx'); 
+  };
 
 const IconInventory = ({ color = '#7c56c6' }) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -62,7 +66,21 @@ const AdminLayout = () => {
     <div style={{ display:'grid', gridTemplateColumns:'260px 1fr', minHeight:'100vh', background:'#f4ebfa', fontFamily:'Montserrat, sans-serif' }}>
       <aside style={asideStyle}>
         <div>
-          <div style={{ fontSize:20, fontWeight:700, marginBottom:18 }}>Admin · Bethesda</div>
+           <div 
+          style={{ 
+            fontSize: 20, 
+            fontWeight: 700, 
+            marginBottom: 18,
+            cursor: 'pointer', // Indica que es clickable
+            transition: 'opacity 0.2s ease', // Transición suave
+            }}  
+            onClick={handleGoToHome}
+            onMouseEnter={(e) => e.target.style.opacity = '0.8'} // Efecto hover
+            onMouseLeave={(e) => e.target.style.opacity = '1'}
+          >
+            Admin · Bethesda
+          </div>
+          
 
           <nav style={{ display:'flex', flexDirection:'column', gap:10 }}>
             <NavLink to="/admin" end style={linkStyle}>
