@@ -52,11 +52,15 @@ class MigrationRunner {
 
     async getExecutedMigrations() {
         try {
+            // Asegurar que la tabla existe
+            await this.ensureMigrationTable();
+            
             const result = await this.client.query(
                 'SELECT version FROM schema_migrations ORDER BY version'
             );
             return result.rows.map(row => row.version);
         } catch (error) {
+            console.log('⚠️ Error obteniendo migraciones ejecutadas:', error.message);
             return []; // La tabla no existe aún
         }
     }
@@ -131,28 +135,27 @@ class MigrationRunner {
         const startTime = Date.now();
         
         try {
-            await this.client.query('BEGIN');
-            
-            // Verificar si la migración ya está registrada
+            // Verificar si la migración ya está registrada ANTES de la transacción
             const existsResult = await this.client.query(
                 'SELECT version FROM schema_migrations WHERE version = $1',
                 [version]
             );
             
             if (existsResult.rows.length > 0) {
-                await this.client.query('ROLLBACK');
                 console.log(`⚠️ Migración ${version} ya está registrada, omitiendo...`);
                 return true;
             }
             
+            await this.client.query('BEGIN');
+            
             // Ejecutar la migración
             await this.client.query(content);
             
-            // Registrar en la tabla de control
+            // Registrar en la tabla de control con ON CONFLICT para evitar duplicados
             const rollbackFile = `${version}_rollback_${description.replace(/\s+/g, '_')}.sql`;
             await this.client.query(
                 `INSERT INTO schema_migrations (version, description, checksum, execution_time_ms, rollback_file) 
-                 VALUES ($1, $2, $3, $4, $5)`,
+                 VALUES ($1, $2, $3, $4, $5) ON CONFLICT (version) DO NOTHING`,
                 [version, description, checksum, Date.now() - startTime, rollbackFile]
             );
             
