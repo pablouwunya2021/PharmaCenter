@@ -79,7 +79,7 @@ export default function Publicidad() {
       textShadow: '0 1px 2px rgba(0,0,0,.4)'
     },
     subtle: { textAlign: 'center', color: '#6b7280' },
-    error: { textAlign: 'center', color: '#4d3838ff' },
+    error: { textAlign: 'center', color: '#b91c1c' },
   };
 
   const Arrow = ({ children, onClick }) => {
