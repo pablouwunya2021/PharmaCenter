@@ -67,7 +67,7 @@ export default function Publicidad() {
     img: { width: '100%', height: 200, objectFit: 'cover', display: 'block' },
     badge: {
       position: 'absolute', top: 10, left: 10, padding: '6px 10px', borderRadius: 999,
-      background: 'rgba(0,0,0,.65)', color: '#fff', fontSize: 12, fontWeight: 600, letterSpacing: .3
+      background: 'rgba(0,0,0,.65)', color: '#fcf4f4ff', fontSize: 12, fontWeight: 600, letterSpacing: .3
     },
     gradient: {
       position: 'absolute', left: 0, right: 0, bottom: 0, height: '58%',
