@@ -67,10 +67,58 @@ class MigrationRunner {
             .filter(file => file.endsWith('.sql') && file !== '000_create_migration_table.sql')
             .sort();
 
-        return allMigrations.filter(file => {
+        const pending = [];
+        for (const file of allMigrations) {
             const version = file.split('_')[0];
-            return !executedMigrations.includes(version);
-        });
+            if (!executedMigrations.includes(version)) {
+                // Verificar si la tabla ya existe antes de agregar a pendientes
+                const tableName = this.extractTableName(file);
+                if (tableName) {
+                    const tableExists = await this.tableExists(tableName);
+                    if (!tableExists) {
+                        pending.push(file);
+                    } else {
+                        // Si la tabla existe pero no está registrada, registrarla
+                        await this.registerExistingMigration(version, file);
+                    }
+                } else {
+                    pending.push(file);
+                }
+            }
+        }
+        return pending;
+    }
+
+    extractTableName(filename) {
+        // Extraer nombre de tabla de archivos como "006_creartablapublicidad.sql"
+        const match = filename.match(/crear.*tabla.*(\w+)\.sql$/i);
+        return match ? match[1] : null;
+    }
+
+    async tableExists(tableName) {
+        try {
+            const result = await this.client.query(
+                "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = $1)",
+                [tableName.toLowerCase()]
+            );
+            return result.rows[0].exists;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async registerExistingMigration(version, filename) {
+        try {
+            const description = filename.replace(/^\d+_/, '').replace(/\.sql$/, '').replace(/_/g, ' ');
+            await this.client.query(
+                `INSERT INTO schema_migrations (version, description, checksum, execution_time_ms, rollback_file) 
+                 VALUES ($1, $2, $3, $4, $5) ON CONFLICT (version) DO NOTHING`,
+                [version, description, 'existing_table', 0, `${version}_rollback.sql`]
+            );
+            console.log(`📝 Registrada migración existente ${version}: ${description}`);
+        } catch (error) {
+            // Ignorar errores de registro
+        }
     }
 
     async executeMigration(migrationFile) {
@@ -84,6 +132,18 @@ class MigrationRunner {
         
         try {
             await this.client.query('BEGIN');
+            
+            // Verificar si la migración ya está registrada
+            const existsResult = await this.client.query(
+                'SELECT version FROM schema_migrations WHERE version = $1',
+                [version]
+            );
+            
+            if (existsResult.rows.length > 0) {
+                await this.client.query('ROLLBACK');
+                console.log(`⚠️ Migración ${version} ya está registrada, omitiendo...`);
+                return true;
+            }
             
             // Ejecutar la migración
             await this.client.query(content);

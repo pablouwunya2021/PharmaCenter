@@ -5,14 +5,14 @@
 - Acabas de clonar el proyecto
 - Tu base de datos está desactualizada
 
-## 🚀 Pasos Rápidos (Solo 3 comandos)
+## 🚀 Pasos Rápidos (Solo 2 comandos)
 
 ### 1. Iniciar Docker
 ```powershell
 docker-compose up -d
 ```
 
-### 2. Ejecutar Migraciones
+### 2. Ejecutar Migraciones (ARREGLADO ✅)
 
 #### 🪟 **Windows (PowerShell)**
 ```powershell
@@ -24,11 +24,7 @@ cd database/scripts; node migrate-up.js
 cd database/scripts && node migrate-up.js
 ```
 
-#### ⚠️ **Alternativa universal (cualquier sistema)**
-```bash
-cd database/scripts
-node migrate-up.js
-```
+**📝 Nota:** El script ahora detecta automáticamente si las tablas ya existen y registra las migraciones correctamente.
 
 ### 3. Agregar Datos de Ejemplo (Opcional)
 ```powershell
