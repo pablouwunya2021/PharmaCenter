@@ -469,9 +469,9 @@ app.delete('/api/usuarios/:id', verifyToken, verifyRole('admin'), async (req, re
 });
 
 
-// ================== Publicidad (SIN PROTECCIÓN) =========================
+// ================== Publicidad=========================
 app.get('/api/publicidad', async (req, res) => {
-  const { tipo } = req.query; // ej: ?tipo=descuento | promocion | banner...
+  const { tipo } = req.query; 
   try {
     const sqlWith = 'SELECT * FROM public.obtener_publicidad_vigente($1::varchar)';
     const sqlNo   = 'SELECT * FROM public.obtener_publicidad_vigente()';
