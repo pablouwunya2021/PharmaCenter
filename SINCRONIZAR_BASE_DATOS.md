@@ -45,6 +45,29 @@ docker exec -it postgres psql -U pharma_user -d pharmacenter_db -c "SELECT COUNT
 
 ## ❗ Si tienes errores
 
+### Error: "duplicate key value violates unique constraint schema_migrations_pkey"
+- **Problema:** Las migraciones ya están registradas pero el script intenta ejecutarlas otra vez
+- **Solución:** Limpiar y volver a registrar las migraciones
+
+#### 🔧 **Solución paso a paso:**
+
+**1. Limpiar registros de migraciones:**
+```powershell
+docker exec -it postgres psql -U pharma_user -d pharmacenter_db -c "DELETE FROM schema_migrations;"
+```
+
+**2. Volver a ejecutar migraciones:**
+```powershell
+cd database/scripts; node migrate-up.js
+```
+
+**3. Verificar que funciona:**
+```powershell
+docker exec -it postgres psql -U pharma_user -d pharmacenter_db -c "SELECT COUNT(*) FROM publicidad;"
+```
+
+**📋 Explicación del problema:** Alguien ejecutó las migraciones de otra forma (manualmente o con otro script) y quedaron las tablas creadas, pero la tabla `schema_migrations` tiene registros duplicados o conflictivos.
+
 ### Error: "El token '&&' no es válido"
 - **Problema:** Usas PowerShell en Windows
 - **Solución:** Usa `;` en lugar de `&&` o ejecuta los comandos por separado
