@@ -40,7 +40,47 @@ export default function Publicidad() {
     e.preventDefault();
   };
 
-
+  const S = {
+    section: { marginTop: 30, fontFamily: '"Montserrat", system-ui, -apple-system, Segoe UI, Roboto, sans-serif', color: '#312e81' },
+    title: { textAlign: 'center', fontWeight: 700, fontSize: 'clamp(22px, 3vw, 28px)', margin: '0 0 14px' },
+    wrapper: { position: 'relative', display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 10 },
+    arrow: {
+      border: 0, width: 44, height: 44, borderRadius: 999, background: '#c7b7f3', color: '#4c1d95',
+      fontSize: 20, cursor: 'pointer', display: 'grid', placeItems: 'center', transition: 'transform .15s ease, filter .15s ease'
+    },
+    arrowHover: { transform: 'scale(1.05)', filter: 'brightness(1.05)' },
+    carousel: {
+      display: 'grid', gridAutoFlow: 'column', gridAutoColumns: 'minmax(260px, 1fr)',
+      gap: 18,
+      overflowX: 'hidden',          // <- sin barra visible
+      scrollSnapType: 'x mandatory',
+      padding: '8px 6px 12px',
+      overscrollBehavior: 'contain' // reduce rebotes en móviles
+    },
+    card: { scrollSnapAlign: 'start' },
+    media: {
+      position: 'relative', borderRadius: 16, overflow: 'hidden',
+      border: '1px solid rgba(76, 29, 149, .08)', background: '#fff',
+      boxShadow: '0 8px 24px rgba(76, 29, 149, .10)', transition: 'transform .18s ease, boxShadow .18s ease'
+    },
+    mediaHover: { transform: 'translateY(-2px)', boxShadow: '0 10px 28px rgba(76, 29, 149, .16)' },
+    img: { width: '100%', height: 200, objectFit: 'cover', display: 'block' },
+    badge: {
+      position: 'absolute', top: 10, left: 10, padding: '6px 10px', borderRadius: 999,
+      background: 'rgba(0,0,0,.65)', color: '#fff', fontSize: 12, fontWeight: 600, letterSpacing: .3
+    },
+    gradient: {
+      position: 'absolute', left: 0, right: 0, bottom: 0, height: '58%',
+      background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.75) 100%)'
+    },
+    adTitle: {
+      position: 'absolute', left: 14, right: 14, bottom: 12,
+      color: '#fff', fontWeight: 800, fontSize: 16, lineHeight: 1.2,
+      textShadow: '0 1px 2px rgba(0,0,0,.4)'
+    },
+    subtle: { textAlign: 'center', color: '#6b7280' },
+    error: { textAlign: 'center', color: '#4d3838ff' },
+  };
 
   const Arrow = ({ children, onClick }) => {
     const [hover, setHover] = useState(false);
