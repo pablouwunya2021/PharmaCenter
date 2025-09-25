@@ -468,6 +468,24 @@ app.delete('/api/usuarios/:id', verifyToken, verifyRole('admin'), async (req, re
   }
 });
 
+
+// ================== Publicidad (SIN PROTECCIÓN) =========================
+app.get('/api/publicidad', async (req, res) => {
+  const { tipo } = req.query; // ej: ?tipo=descuento | promocion | banner...
+  try {
+    const sqlWith = 'SELECT * FROM public.obtener_publicidad_vigente($1::varchar)';
+    const sqlNo   = 'SELECT * FROM public.obtener_publicidad_vigente()';
+    const result = (tipo && tipo.trim() !== '')
+      ? await db.query(sqlWith, [tipo.trim()])
+      : await db.query(sqlNo);
+
+    return res.json({ success: true, data: result.rows });
+  } catch (err) {
+    console.error('Error al obtener publicidad:', err);
+    return res.status(500).json({ success: false, error: 'Error interno del servidor' });
+  }
+});
+
 //=================== Login =========================
 
 // Login
