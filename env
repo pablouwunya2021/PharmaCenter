@@ -1,13 +1,26 @@
-# Base de datos
+# Base de datos (manteniendo tus valores actuales)
 DB_HOST=localhost
 DB_PORT=5433
 DB_NAME=pharmacenter_db
 DB_USER=pharma_user
 DB_PASSWORD=pharma_password123
 
-# JWT Secret (¡CAMBIAR EN PRODUCCIÓN!)
+# Para Docker Compose (puerto interno del host)
+DB_PORT_HOST=5433
+
+# JWT Secret (manteniendo tu valor actual)
 JWT_SECRET=clave
 
 # Environment
 NODE_ENV=development
 
+# Configuración de API
+API_PORT=3000
+
+# Configuración de Frontend
+FRONTEND_PORT=8081
+FRONTEND_DEV_PORT=5173
+
+# Para producción cambiar estos valores
+# DB_PASSWORD=password_super_seguro_produccion
+# JWT_SECRET=clave_jwt_super_segura_produccion
