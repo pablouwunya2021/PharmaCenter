@@ -10,6 +10,7 @@ import Header from './components/Header';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import UsersCrud from './pages/admin/UsersCrud';
 
 const MainLayout = ({ children }) => (
   <>
@@ -39,6 +40,7 @@ function App() {
       >
         <Route index element={<AdminDashboard />} />
         <Route path="inventory" element={<Inventory />} />
+        <Route path="users" element={<UsersCrud />} />
       </Route>
     </Routes>
   );
