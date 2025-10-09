@@ -16,7 +16,7 @@ const userController = {
 
       // Verificar si el correo ya está en uso
       const existe = await db.query(
-        'SELECT * FROM usuarios WHERE correo = $1',
+        'SELECT * FROM Usuario WHERE correo = $1',
         [correo]
       );
       if (existe.rowCount > 0) {
@@ -29,9 +29,9 @@ const userController = {
 
       // Insertar usuario
       const query = `
-        INSERT INTO usuarios (nombre, correo, contraseña, rol)
+        INSERT INTO Usuario (nombre, correo, contrasena, rol)
         VALUES ($1, $2, $3, $4)
-        RETURNING id_usuario, nombre, correo, rol;
+        RETURNING idusuario, nombre, correo, rol;
       `;
       const values = [nombre, correo, hash, rol];
 
@@ -59,7 +59,7 @@ const userController = {
 
       // Buscar usuario en la base de datos
       const result = await db.query(
-        'SELECT * FROM usuarios WHERE correo = $1',
+        'SELECT * FROM Usuario WHERE correo = $1',
         [correo]
       );
 
@@ -70,7 +70,7 @@ const userController = {
       const usuario = result.rows[0];
 
       // Validar contraseña con bcrypt
-      const match = await bcrypt.compare(contraseña, usuario.contraseña);
+      const match = await bcrypt.compare(contraseña, usuario.contrasena);
       if (!match) {
         return res.status(401).json({ msg: 'Credenciales inválidas.' });
       }
@@ -78,7 +78,7 @@ const userController = {
       // Generar token JWT
       const token = jwt.sign(
         {
-          idUsuario: usuario.id_usuario,
+          idUsuario: usuario.idusuario,
           rol: usuario.rol
         },
         process.env.JWT_SECRET,
@@ -100,7 +100,7 @@ const userController = {
   getAllUsers: async (req, res) => {
     try {
       const result = await db.query(
-        'SELECT id_usuario, nombre, correo, rol FROM usuarios'
+        'SELECT idusuario, nombre, correo, rol FROM Usuario'
       );
       return res.json(result.rows);
     } catch (error) {
