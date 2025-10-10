@@ -5,7 +5,6 @@ import '../styles/Cart.css'
 import { useCart } from '../context/CartContext'
 import CartItemList from '../components/CartItemList'
 import CartTotal from '../components/CartTotal'
-import ClearCartButton from '../components/ClearCartButton'
 import { Link } from 'react-router-dom'
 
 const Cart = () => {
@@ -47,7 +46,6 @@ const Cart = () => {
 
             <aside className="summary-section">
               <CartTotal total={total} />
-              <ClearCartButton />
             </aside>
           </div>
         )}
