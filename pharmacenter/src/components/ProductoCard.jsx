@@ -1,19 +1,36 @@
 // src/components/ProductoCard.jsx
 import { useState } from 'react';
+import { useCart } from '../context/CartContext';
 import '../styles/compra.css';
 
 function ProductoCard({ producto }) {
   const [cantidad, setCantidad] = useState(1);
+  const { addToCart } = useCart();
 
-  const handleSubmit = (e) => {
+  const handleAddToCart = (e) => {
     e.preventDefault();
 
     if (cantidad < 1) {
-      alert("Debes ingresar al menos una unidad");
+      alert('Debes ingresar al menos una unidad');
       return;
     }
 
-    alert(`¡Compra confirmada: ${cantidad} x ${producto.nombre}!`);
+    if (producto.cantidadInventario !== undefined && producto.cantidadInventario <= 0) {
+      alert('Producto sin stock disponible');
+      return;
+    }
+
+    const productoParaCarrito = {
+      id: producto.id,
+      nombre: producto.nombre,
+      precio: Number(producto.precio) || 0,
+      cantidad: Number(cantidad),
+      imagenUrl: producto.imagenUrl,
+      cantidadInventario: producto.cantidadInventario,
+    };
+
+    addToCart(productoParaCarrito);
+    alert(`✅ Agregado al carrito: ${cantidad} x ${producto.nombre}`);
   };
 
   const imagenURL = producto.imagenUrl?.trim()
@@ -37,7 +54,7 @@ function ProductoCard({ producto }) {
               <strong>Disponible:</strong> {producto.cantidadInventario > 0 ? producto.cantidadInventario : 'Cantidad no disponible'}
             </p>
 
-            <form onSubmit={handleSubmit} className="product-form">
+            <form onSubmit={handleAddToCart} className="product-form">
               <label className="form-label">
                 Cantidad a comprar:
                 <input
@@ -49,7 +66,7 @@ function ProductoCard({ producto }) {
                 />
               </label>
               <button type="submit" className="form-button">
-                Confirmar Compra
+                Agregar al carrito
               </button>
             </form>
           </div>
