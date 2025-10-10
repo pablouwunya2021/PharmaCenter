@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import AddToCartButton from './AddToCartButton';
 
 function Catalogo() {
   const [medicamentos, setMedicamentos] = useState([]);
@@ -42,9 +44,12 @@ function Catalogo() {
               <p>Cantidad: {med.cantidadinventario}</p>
               <p>Precio: ${med.precio}</p>
               <p>Proveedor: {med.proveedor}</p>
-              <Link to={`/compra/${med.idmedicamento}`} className="btn-comprar">
-                Comprar
-              </Link>
+              <div className="card-actions">
+                <Link to={`/compra/${med.idmedicamento}`} className="btn-comprar">
+                  Ver
+                </Link>
+                <AddToCartButton med={med} />
+              </div>
             </div>
           ))}
         </div>
