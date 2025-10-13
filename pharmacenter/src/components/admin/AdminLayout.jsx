@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
+const IconHome = ({ color = '#7c56c6' }) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill={color} fillOpacity="0.18"/>
+    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const IconBox = ({ color = '#7c56c6' }) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
     <rect x="3" y="3" width="18" height="18" rx="4" fill={color} fillOpacity="0.18"/>
@@ -83,6 +90,43 @@ const AdminLayout = () => {
           
 
           <nav style={{ display:'flex', flexDirection:'column', gap:10 }}>
+            <button
+              onClick={() => navigate('/')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '10px 12px',
+                borderRadius: 12,
+                textDecoration: 'none',
+                color: '#ffffffee',
+                background: 'transparent',
+                border: '1px solid transparent',
+                transition: 'all .18s ease-in-out',
+                fontWeight: 500,
+                cursor: 'pointer',
+                width: '100%',
+                fontSize: 'inherit',
+                fontFamily: 'inherit'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1))';
+                e.target.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                e.target.style.boxShadow = '0 8px 20px rgba(239, 68, 68, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'transparent';
+                e.target.style.border = '1px solid transparent';
+                e.target.style.boxShadow = 'none';
+              }}
+              title="Ir al inicio"
+            >
+              <div style={{ width:40, height:40, borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.18)' }}>
+                <IconHome color="#6e49b3" />
+              </div>
+              <div>Inicio</div>
+            </button>
+
             <NavLink to="/admin" end style={linkStyle}>
               <div style={{ display:'flex', alignItems:'center', gap:12 }}>
                 <div style={{ width:40, height:40, borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.18)' }}>
