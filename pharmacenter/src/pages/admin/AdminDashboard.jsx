@@ -18,7 +18,22 @@ const AdminDashboard = () => {
 
   return (
     <section>
-      <h1 style={{ color:'#4a2c75', fontWeight:800, marginBottom:8 }}>Bienvenido al Panel</h1>
+      <h1 
+        style={{ 
+          color:'#4a2c75', 
+          fontWeight:800, 
+          marginBottom: 8,
+          cursor:'pointer',
+          textDecoration:'none',
+          transition:'color 0.2s ease'
+        }}
+        onClick={() => navigate('/')}
+        onMouseEnter={(e) => e.target.style.color = '#6b21a8'}
+        onMouseLeave={(e) => e.target.style.color = '#4a2c75'}
+        title="Ir al inicio"
+      >
+        Bienvenido al Panel
+      </h1>
       <p style={{ color:'#6b5b95', marginBottom:18 }}>Selecciona una opción para continuar.</p>
 
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16 }}>
