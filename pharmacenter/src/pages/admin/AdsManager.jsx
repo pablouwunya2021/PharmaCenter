@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/Inventory.css"; // Reutilizamos las animaciones y estilos base
+import "../styles/AdsManager.css"; // 🔹 Importa tus nuevos estilos personalizados
 
 const AdsManager = () => {
   const [ads, setAds] = useState([
@@ -45,7 +45,10 @@ const AdsManager = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleAdd = (e) => {
@@ -85,94 +88,110 @@ const AdsManager = () => {
   };
 
   return (
-    <div className="inventory-page">
-      <div className="card add-med-form" style={{ animation: "fadeIn 0.4s ease" }}>
+    <div className="ads-page">
+      {/* ---------- Formulario ---------- */}
+      <div className="ads-card">
         <h2>Agregar Nueva Publicidad</h2>
-        <form onSubmit={handleAdd}>
-          <input
-            name="titulo"
-            placeholder="Título"
-            value={form.titulo}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="descripcion"
-            placeholder="Descripción"
-            value={form.descripcion}
-            onChange={handleChange}
-            rows={3}
-            style={{ resize: "none" }}
-          />
-          <select
-            name="tipo_publicidad"
-            value={form.tipo_publicidad}
-            onChange={handleChange}
-          >
-            <option value="banner">Banner</option>
-            <option value="promocion">Promoción</option>
-            <option value="descuento">Descuento</option>
-            <option value="oferta_especial">Oferta Especial</option>
-            <option value="evento">Evento</option>
-            <option value="informativa">Informativa</option>
-          </select>
-
-          <input
-            type="date"
-            name="fecha_inicio"
-            value={form.fecha_inicio}
-            onChange={handleChange}
-          />
-          <input
-            type="date"
-            name="fecha_fin"
-            value={form.fecha_fin}
-            onChange={handleChange}
-          />
-
-          <input
-            name="descuento_porcentaje"
-            type="number"
-            placeholder="% Descuento"
-            value={form.descuento_porcentaje}
-            onChange={handleChange}
-          />
-          <input
-            name="codigo_promocional"
-            placeholder="Código Promocional"
-            value={form.codigo_promocional}
-            onChange={handleChange}
-          />
-
-          <input
-            name="imagen_url"
-            placeholder="URL de la imagen"
-            value={form.imagen_url}
-            onChange={handleChange}
-          />
-          <input
-            name="url_enlace"
-            placeholder="URL del enlace"
-            value={form.url_enlace}
-            onChange={handleChange}
-          />
-
-          <label>
+        <form onSubmit={handleAdd} className="ads-form">
+          <div className="form-row">
             <input
-              type="checkbox"
-              name="activo"
-              checked={form.activo}
+              name="titulo"
+              placeholder="Título"
+              value={form.titulo}
               onChange={handleChange}
-            />{" "}
-            Activo
-          </label>
+              required
+            />
+          </div>
+
+          <div className="form-row">
+            <textarea
+              name="descripcion"
+              placeholder="Descripción"
+              value={form.descripcion}
+              onChange={handleChange}
+              rows={2}
+              style={{ flex: 2 }}
+            />
+            <select
+              name="tipo_publicidad"
+              value={form.tipo_publicidad}
+              onChange={handleChange}
+              style={{ flex: 1 }}
+            >
+              <option value="banner">Banner</option>
+              <option value="promocion">Promoción</option>
+              <option value="descuento">Descuento</option>
+              <option value="oferta_especial">Oferta Especial</option>
+              <option value="evento">Evento</option>
+              <option value="informativa">Informativa</option>
+            </select>
+          </div>
+
+          <div className="form-row">
+            <input
+              type="date"
+              name="fecha_inicio"
+              value={form.fecha_inicio}
+              onChange={handleChange}
+            />
+            <input
+              type="date"
+              name="fecha_fin"
+              value={form.fecha_fin}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-row">
+            <input
+              name="descuento_porcentaje"
+              type="number"
+              placeholder="% Descuento"
+              value={form.descuento_porcentaje}
+              onChange={handleChange}
+            />
+            <input
+              name="codigo_promocional"
+              placeholder="Código Promocional"
+              value={form.codigo_promocional}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-row">
+            <input
+              name="imagen_url"
+              placeholder="URL de la imagen"
+              value={form.imagen_url}
+              onChange={handleChange}
+            />
+            <input
+              name="url_enlace"
+              placeholder="URL del enlace"
+              value={form.url_enlace}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="ads-active">
+            <label>
+              <input
+                type="checkbox"
+                name="activo"
+                checked={form.activo}
+                onChange={handleChange}
+              />{" "}
+              Activo
+            </label>
+          </div>
 
           <button type="submit">Guardar Publicidad</button>
         </form>
       </div>
 
-      <div className="card" style={{ animation: "fadeInUp 0.4s ease" }}>
-        <table className="inventory-table">
+      {/* ---------- Tabla ---------- */}
+      <div className="ads-card">
+        <table className="ads-table">
           <thead>
             <tr>
               <th>ID</th>
@@ -195,7 +214,9 @@ const AdsManager = () => {
                 <td>{a.fecha_inicio}</td>
                 <td>{a.fecha_fin}</td>
                 <td>
-                  {a.descuento_porcentaje ? `${a.descuento_porcentaje}%` : "—"}
+                  {a.descuento_porcentaje
+                    ? `${a.descuento_porcentaje}%`
+                    : "—"}
                 </td>
                 <td>
                   <button
@@ -209,22 +230,6 @@ const AdsManager = () => {
                       cursor: "pointer",
                       transition: "background 0.2s ease, transform 0.1s ease",
                     }}
-                    onMouseOver={(e) =>
-                      (e.currentTarget.style.background = a.activo
-                        ? "#27ae60"
-                        : "#999")
-                    }
-                    onMouseOut={(e) =>
-                      (e.currentTarget.style.background = a.activo
-                        ? "#2ecc71"
-                        : "#bbb")
-                    }
-                    onMouseDown={(e) =>
-                      (e.currentTarget.style.transform = "scale(0.96)")
-                    }
-                    onMouseUp={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
                   >
                     {a.activo ? "Activo" : "Inactivo"}
                   </button>
@@ -253,31 +258,10 @@ const AdsManager = () => {
                     "—"
                   )}
                 </td>
-                <td className="actions-cell">
+                <td>
                   <button
+                    className="ads-btn-delete"
                     onClick={() => handleDelete(a.idpublicidad)}
-                    style={{
-                      backgroundColor: "#e03131",
-                      border: "none",
-                      color: "#fff",
-                      padding: "8px 14px",
-                      borderRadius: "10px",
-                      cursor: "pointer",
-                      fontSize: "0.9rem",
-                      transition: "background-color .2s ease, transform .1s ease",
-                    }}
-                    onMouseOver={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#c92a2a")
-                    }
-                    onMouseOut={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#e03131")
-                    }
-                    onMouseDown={(e) =>
-                      (e.currentTarget.style.transform = "scale(0.96)")
-                    }
-                    onMouseUp={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
                   >
                     🗑 Eliminar
                   </button>
@@ -292,4 +276,5 @@ const AdsManager = () => {
 };
 
 export default AdsManager;
+
 
