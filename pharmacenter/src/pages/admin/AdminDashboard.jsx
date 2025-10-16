@@ -183,6 +183,25 @@ const AdminDashboard = () => {
             <span style={{ marginLeft:'auto', color:'#5c3c92', fontWeight:900, fontSize:20 }}>→</span>
           </button>
         )}
+
+        {/* Publicidad - Disponible para todos (cámbialo a userIsAdmin && (...) si quieres restringir) */}
+        <button 
+          type="button" 
+          onClick={() => navigate('/admin/ads')} 
+          style={cardStyle}
+        >
+          <span style={iconStyle}>
+            {/* Megáfono */}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M3 10v4c0 .55.45 1 1 1h3.28l2.3 3.45A1 1 0 0 0 10.4 19h1.2a1 1 0 0 0 .82-1.57L10.9 14H14l6 3V7l-6 3H4c-.55 0-1 .45-1 1zm17-2.38v8.76L15.53 14H6v-4h9.53L20 7.62z"/>
+            </svg>
+          </span>
+          <div>
+            <div style={{ fontWeight:800, color:'#3b2a63' }}>Publicidad</div>
+            <div style={{ color:'#6b5b95', fontSize:14 }}>Gestiona campañas, banners o anuncios</div>
+          </div>
+          <span style={{ marginLeft:'auto', color:'#5c3c92', fontWeight:900, fontSize:20 }}>→</span>
+        </button>
       </div>
 
       {/* Información para usuarios no admin */}
