@@ -471,20 +471,56 @@ app.delete('/api/usuarios/:id', verifyToken, verifyRole('admin'), async (req, re
 
 // ================== Publicidad=========================
 app.get('/api/publicidad', async (req, res) => {
-  const { tipo } = req.query; 
+  const { tipo, all } = req.query; 
   try {
-    const sqlWith = 'SELECT * FROM public.obtener_publicidad_vigente($1::varchar)';
-    const sqlNo   = 'SELECT * FROM public.obtener_publicidad_vigente()';
-    const result = (tipo && tipo.trim() !== '')
-      ? await db.query(sqlWith, [tipo.trim()])
-      : await db.query(sqlNo);
+    let result;
 
-    return res.json({ success: true, data: result.rows });
+    if (all === "true") {
+      // 🧾 Mostrar TODAS las publicidades sin filtrar
+      result = await db.query(`
+        SELECT idpublicidad, titulo, descripcion, tipo_publicidad, imagen_url,
+               fecha_inicio, fecha_fin, activo, posicion, url_enlace,
+               descuento_porcentaje, codigo_promocional
+        FROM publicidad
+        ORDER BY idpublicidad DESC
+      `);
+    } else {
+      // ✅ Solo vigentes (mismo comportamiento anterior)
+      const sqlWith = 'SELECT * FROM public.obtener_publicidad_vigente($1::varchar)';
+      const sqlNo   = 'SELECT * FROM public.obtener_publicidad_vigente()';
+      result = (tipo && tipo.trim() !== '')
+        ? await db.query(sqlWith, [tipo.trim()])
+        : await db.query(sqlNo);
+    }
+
+    // 🔄 Normalización (igual que antes)
+    const rows = result.rows.map((r) => ({
+      idpublicidad: r.idpublicidad ?? r.id_publicidad ?? r.id ?? null,
+      titulo: r.titulo ?? r.nombre ?? "",
+      descripcion: r.descripcion ?? "",
+      tipo_publicidad: r.tipo_publicidad ?? r.tipo ?? "banner",
+      fecha_inicio: r.fecha_inicio ?? r.fechainicio ?? null,
+      fecha_fin: r.fecha_fin ?? r.fechafin ?? null,
+      descuento_porcentaje:
+        r.descuento_porcentaje ?? r.descuento ?? null,
+      codigo_promocional:
+        r.codigo_promocional ?? r.codigo ?? null,
+      imagen_url: r.imagen_url ?? r.imagen ?? "",
+      url_enlace: r.url_enlace ?? r.url ?? "",
+      activo:
+        r.activo ?? r.estado ?? r.enabled ?? r.is_active ?? true,
+      posicion: r.posicion ?? 1,
+    }));
+
+    return res.json({ success: true, data: rows });
   } catch (err) {
     console.error('Error al obtener publicidad:', err);
     return res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 });
+
+
+
 
 // ================== CRUD Publicidad =========================
 // Crear nueva publicidad (versión final con validaciones completas)
@@ -644,6 +680,7 @@ if (req.body.activo === undefined || req.body.activo === null) {
     });
   }
 });
+
 
 
 // Eliminar una publicidad por ID (versión final con validaciones)
