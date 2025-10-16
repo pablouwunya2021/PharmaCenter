@@ -1,0 +1,153 @@
+.ads-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 25px;
+  background-color: #f7f1ff;
+  min-height: 100vh;
+}
+
+/* 🔹 Tarjeta de formulario */
+.ads-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(120, 81, 169, 0.15);
+  animation: fadeIn 0.4s ease;
+}
+
+/* 🔹 Título */
+.ads-card h2 {
+  color: #5d3c90;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* 🔹 Formulario */
+.ads-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #cfc7e0;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  background-color: #faf8ff;
+}
+
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
+  border-color: #7d5cc9;
+  box-shadow: 0 0 5px rgba(109, 80, 172, 0.3);
+  outline: none;
+  background-color: #fff;
+}
+
+/* 🔹 Checkbox de “Activo” */
+.ads-active {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #5a3c8a;
+  margin-top: 8px;
+}
+
+.ads-active input {
+  transform: scale(1.2);
+}
+
+/* 🔹 Botón principal */
+.ads-form button {
+  background: #6b4ba1;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.1s ease;
+}
+
+.ads-form button:hover {
+  background: #583d87;
+}
+
+.ads-form button:active {
+  transform: scale(0.97);
+}
+
+/* 🔹 Tabla */
+.ads-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(100, 70, 140, 0.15);
+}
+
+.ads-table th,
+.ads-table td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #e5dbff;
+  font-size: 0.95rem;
+}
+
+.ads-table th {
+  background: #70589a;
+  color: white;
+  font-weight: 600;
+}
+
+.ads-table tr:hover {
+  background-color: #f4ecff;
+  transition: background-color 0.2s ease;
+}
+
+/* 🔹 Botones de acción */
+.ads-btn-delete {
+  background-color: #e03131;
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.ads-btn-delete:hover {
+  background-color: #c92a2a;
+}
+
+.ads-btn-delete:active {
+  transform: scale(0.96);
+}
+
+/* 🔹 Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
