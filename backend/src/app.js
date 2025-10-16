@@ -646,82 +646,75 @@ if (req.body.activo === undefined || req.body.activo === null) {
 });
 
 
-// Eliminar publicidad
+// Eliminar una publicidad por ID (versión final con validaciones)
 app.delete('/api/publicidad/:id', async (req, res) => {
-  const { id } = req.params;
   try {
-    const result = await db.query("DELETE FROM publicidad WHERE idpublicidad = $1", [id]);
-    if (result.rowCount === 0)
-      return res.status(404).json({ success: false, error: "Publicidad no encontrada" });
+    const { id } = req.params;
 
-    res.json({ success: true, message: "Publicidad eliminada" });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+    // =========================
+    // 🔍 Validación de ID
+    // =========================
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({
+        success: false,
+        error: "ID de publicidad inválido o no especificado",
+      });
+    }
 
-//=================== Login =========================
+    const idPublicidad = parseInt(id, 10);
 
-// Login
-app.post('/api/login', async (req, res) => {
-  const { correo, contrasena } = req.body;
+    // =========================
+    // 🧾 Verificar existencia del registro
+    // =========================
+    const checkSql = `SELECT idpublicidad FROM publicidad WHERE idpublicidad = $1`;
+    const checkResult = await db.query(checkSql, [idPublicidad]);
 
-  if (!correo || !contrasena) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'Correo y contraseña son requeridos' 
-    });
-  }
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: "No se encontró ninguna publicidad con el ID especificado",
+      });
+    }
 
-  try {
-    const result = await db.query(
-      'SELECT * FROM Usuario WHERE correo = $1',
-      [correo]
-    );
+    // =========================
+    // 🗑️ Eliminar la publicidad
+    // =========================
+    const deleteSql = `DELETE FROM publicidad WHERE idpublicidad = $1 RETURNING idpublicidad`;
+    const result = await db.query(deleteSql, [idPublicidad]);
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Credenciales inválidas' 
+      return res.status(404).json({
+        success: false,
+        error: "No se pudo eliminar la publicidad (posiblemente ya fue eliminada)",
       });
     }
 
-    const user = result.rows[0];
-    const match = await bcrypt.compare(contrasena, user.contrasena);
-
-    if (!match) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Credenciales inválidas' 
-      });
-    }
-
-    const token = jwt.sign(
-      { 
-        idUsuario: user.idusuario, 
-        correo: user.correo, 
-        rol: user.rol 
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-
-    res.json({ 
-      success: true, 
-      message: 'Login exitoso',
-      token,
-      user: {
-        idUsuario: user.idusuario,
-        nombre: user.nombre,
-        correo: user.correo,
-        rol: user.rol
-      }
+    // =========================
+    // 🎉 Respuesta exitosa
+    // =========================
+    return res.status(200).json({
+      success: true,
+      message: `Publicidad con ID ${idPublicidad} eliminada correctamente`,
     });
+
   } catch (err) {
-    console.error('Error en login:', err);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error interno del servidor' 
+    // =========================
+    // ❌ Manejo de errores
+    // =========================
+    console.error("Error al eliminar publicidad:", err);
+
+    // Error típico: input sintácticamente incorrecto o conexión
+    if (err.code === "22P02") {
+      return res.status(400).json({
+        success: false,
+        error: "El ID proporcionado no tiene un formato válido (debe ser un número entero)",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      error: "Error interno al intentar eliminar la publicidad",
+      details: err.message,
     });
   }
 });
