@@ -12,6 +12,8 @@ import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UsersCrud from './pages/admin/UsersCrud';
 
+import AdsManager from './pages/admin/AdsManager';
+
 const MainLayout = ({ children }) => (
   <>
     <Header />
@@ -41,6 +43,7 @@ function App() {
         <Route index element={<AdminDashboard />} />
         <Route path="inventory" element={<Inventory />} />
         <Route path="users" element={<UsersCrud />} />
+        <Route path="ads" element={<AdsManager />} />
       </Route>
     </Routes>
   );
