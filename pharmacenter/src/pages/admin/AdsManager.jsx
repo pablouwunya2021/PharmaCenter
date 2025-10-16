@@ -14,9 +14,7 @@ const addDays = (dateStr, days) => {
   return d.toISOString().slice(0, 10);
 };
 
-// ✅ Helper robusto para convertir lo que venga del backend a boolean real
-// true  -> true, "true", "t", "1", 1, "yes", "y", "si", "sí"
-// false -> false, "false", "f", "0", 0, "no", "n", "", null, undefined
+
 const asBool = (v) => {
   if (v === true) return true;
   if (v === false) return false;
