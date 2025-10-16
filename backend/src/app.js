@@ -486,6 +486,100 @@ app.get('/api/publicidad', async (req, res) => {
   }
 });
 
+app.post('/api/publicidad', async (req, res) => {
+  const {
+    titulo,
+    descripcion,
+    tipo_publicidad,
+    imagen_url,
+    fecha_inicio,
+    fecha_fin,
+    activo,
+    posicion,
+    url_enlace,
+    descuento_porcentaje,
+    codigo_promocional
+  } = req.body;
+
+  try {
+    const result = await db.query(
+      `INSERT INTO publicidad (
+        titulo, descripcion, tipo_publicidad, imagen_url, fecha_inicio, fecha_fin,
+        activo, posicion, url_enlace, descuento_porcentaje, codigo_promocional
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+      RETURNING *`,
+      [
+        titulo,
+        descripcion,
+        tipo_publicidad,
+        imagen_url,
+        fecha_inicio,
+        fecha_fin,
+        activo,
+        posicion || 1,
+        url_enlace,
+        descuento_porcentaje || null,
+        codigo_promocional || null
+      ]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "Publicidad creada correctamente",
+      data: result.rows[0]
+    });
+  } catch (err) {
+    console.error("Error al crear publicidad:", err);
+    res.status(500).json({
+      success: false,
+      error: "Error al registrar publicidad",
+      details: err.message
+    });
+  }
+});
+
+// Actualizar publicidad
+app.put('/api/publicidad/:id', async (req, res) => {
+  const { id } = req.params;
+  const campos = req.body;
+
+  if (!id || Object.keys(campos).length === 0) {
+    return res.status(400).json({ success: false, error: "Datos incompletos" });
+  }
+
+  const columnas = Object.keys(campos);
+  const valores = Object.values(campos);
+  const setQuery = columnas.map((col, i) => `${col} = $${i + 1}`).join(", ");
+
+  try {
+    const result = await db.query(
+      `UPDATE publicidad SET ${setQuery}, updated_at = NOW() WHERE idpublicidad = $${columnas.length + 1} RETURNING *`,
+      [...valores, id]
+    );
+
+    if (result.rowCount === 0)
+      return res.status(404).json({ success: false, error: "Publicidad no encontrada" });
+
+    res.json({ success: true, message: "Publicidad actualizada", data: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Eliminar publicidad
+app.delete('/api/publicidad/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await db.query("DELETE FROM publicidad WHERE idpublicidad = $1", [id]);
+    if (result.rowCount === 0)
+      return res.status(404).json({ success: false, error: "Publicidad no encontrada" });
+
+    res.json({ success: true, message: "Publicidad eliminada" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 //=================== Login =========================
 
 // Login
