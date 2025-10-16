@@ -486,85 +486,165 @@ app.get('/api/publicidad', async (req, res) => {
   }
 });
 
+// ================== CRUD Publicidad =========================
+// Crear nueva publicidad (versión final con validaciones completas)
 app.post('/api/publicidad', async (req, res) => {
-  const {
-    titulo,
-    descripcion,
-    tipo_publicidad,
-    imagen_url,
-    fecha_inicio,
-    fecha_fin,
-    activo,
-    posicion,
-    url_enlace,
-    descuento_porcentaje,
-    codigo_promocional
-  } = req.body;
-
   try {
-    const result = await db.query(
-      `INSERT INTO publicidad (
-        titulo, descripcion, tipo_publicidad, imagen_url, fecha_inicio, fecha_fin,
-        activo, posicion, url_enlace, descuento_porcentaje, codigo_promocional
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-      RETURNING *`,
-      [
-        titulo,
-        descripcion,
-        tipo_publicidad,
-        imagen_url,
-        fecha_inicio,
-        fecha_fin,
-        activo,
-        posicion || 1,
-        url_enlace,
-        descuento_porcentaje || null,
-        codigo_promocional || null
-      ]
-    );
+    let {
+      titulo,
+      descripcion,
+      tipo_publicidad,
+      imagen_url,
+      fecha_inicio,
+      fecha_fin,
+      activo,
+      posicion,
+      url_enlace,
+      descuento_porcentaje,
+      codigo_promocional
+    } = req.body;
 
-    res.status(201).json({
+    // =========================
+    // 🔍 Validaciones obligatorias
+    // =========================
+    if (!titulo || !fecha_inicio || !fecha_fin) {
+      return res.status(400).json({
+        success: false,
+        error: "Los campos título, fecha de inicio y fecha fin son obligatorios",
+      });
+    }
+
+    // =========================
+    // 🧹 Normalización de datos
+    // =========================
+    titulo = String(titulo).trim();
+    descripcion = descripcion ?? "";
+    tipo_publicidad = tipo_publicidad || "banner";
+    imagen_url = imagen_url ?? "";
+    url_enlace = url_enlace ?? "";
+
+    // ✅ Boolean
+    // ✅ Convertir a booleano real y permitir inactivas
+if (typeof activo === "string") {
+  const val = activo.trim().toLowerCase();
+  activo = ["true", "1", "yes", "y", "si", "sí"].includes(val);
+} else {
+  activo = Boolean(activo);
+}
+
+// Si no viene explícitamente, dejar activo = true por defecto
+if (req.body.activo === undefined || req.body.activo === null) {
+  activo = true;
+}
+
+    // ✅ Posición (entero con valor por defecto 1)
+    posicion = Number.parseInt(posicion, 10);
+    if (Number.isNaN(posicion)) posicion = 1;
+
+    // ✅ Código promocional (si está vacío → NULL)
+    if (!codigo_promocional || codigo_promocional.trim() === "") {
+      codigo_promocional = null;
+    }
+
+    // ✅ Descuento (si está vacío o no numérico → NULL)
+    if (
+      descuento_porcentaje === "" ||
+      descuento_porcentaje === undefined ||
+      descuento_porcentaje === null ||
+      Number.isNaN(Number(descuento_porcentaje))
+    ) {
+      descuento_porcentaje = null;
+    } else {
+      descuento_porcentaje = Number.parseFloat(descuento_porcentaje);
+    }
+
+    // =========================
+    // 🧠 Validaciones lógicas
+    // =========================
+    // 1️⃣ Validar rango de descuento
+    if (descuento_porcentaje !== null && (descuento_porcentaje < 0 || descuento_porcentaje > 100)) {
+      return res.status(400).json({
+        success: false,
+        error: "El descuento debe estar entre 0 y 100",
+      });
+    }
+
+    // 2️⃣ Validar coherencia de fechas
+    const inicio = new Date(fecha_inicio);
+    const fin = new Date(fecha_fin);
+    if (inicio > fin) {
+      return res.status(400).json({
+        success: false,
+        error: "La fecha de inicio no puede ser posterior a la fecha de fin",
+      });
+    }
+
+    // =========================
+    // 🧾 Inserción en la base de datos
+    // =========================
+    const insertSql = `
+      INSERT INTO publicidad (
+        titulo, descripcion, tipo_publicidad, imagen_url,
+        fecha_inicio, fecha_fin, activo, posicion,
+        url_enlace, descuento_porcentaje, codigo_promocional
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+      RETURNING idpublicidad, titulo, descripcion, tipo_publicidad, imagen_url,
+                fecha_inicio, fecha_fin, activo, posicion, url_enlace,
+                descuento_porcentaje, codigo_promocional
+    `;
+
+    const values = [
+      titulo,
+      descripcion,
+      tipo_publicidad,
+      imagen_url,
+      fecha_inicio,
+      fecha_fin,
+      activo,
+      posicion,
+      url_enlace,
+      descuento_porcentaje,
+      codigo_promocional
+    ];
+
+    const result = await db.query(insertSql, values);
+
+    // =========================
+    // 🎉 Respuesta exitosa
+    // =========================
+    return res.status(201).json({
       success: true,
       message: "Publicidad creada correctamente",
-      data: result.rows[0]
+      data: result.rows[0],
     });
+
   } catch (err) {
+    // =========================
+    // ❌ Manejo de errores específicos
+    // =========================
+    if (err.code === "23505" && err.constraint === "publicidad_codigo_promocional_key") {
+      return res.status(400).json({
+        success: false,
+        error: "El código promocional ya existe. Usa uno diferente o déjalo vacío.",
+      });
+    }
+
+    if (err.code === "23514" && err.constraint === "publicidad_descuento_porcentaje_check") {
+      return res.status(400).json({
+        success: false,
+        error: "El valor de descuento no cumple la regla de la base de datos (debe estar entre 0 y 100).",
+      });
+    }
+
     console.error("Error al crear publicidad:", err);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: "Error al registrar publicidad",
-      details: err.message
+      details: err.message,
     });
   }
 });
 
-// Actualizar publicidad
-app.put('/api/publicidad/:id', async (req, res) => {
-  const { id } = req.params;
-  const campos = req.body;
-
-  if (!id || Object.keys(campos).length === 0) {
-    return res.status(400).json({ success: false, error: "Datos incompletos" });
-  }
-
-  const columnas = Object.keys(campos);
-  const valores = Object.values(campos);
-  const setQuery = columnas.map((col, i) => `${col} = $${i + 1}`).join(", ");
-
-  try {
-    const result = await db.query(
-      `UPDATE publicidad SET ${setQuery}, updated_at = NOW() WHERE idpublicidad = $${columnas.length + 1} RETURNING *`,
-      [...valores, id]
-    );
-
-    if (result.rowCount === 0)
-      return res.status(404).json({ success: false, error: "Publicidad no encontrada" });
-
-    res.json({ success: true, message: "Publicidad actualizada", data: result.rows[0] });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
 
 // Eliminar publicidad
 app.delete('/api/publicidad/:id', async (req, res) => {
