@@ -3,11 +3,7 @@ import "../../styles/AdsManager.css";
 
 const API = "http://localhost:3000";
 
-/**
- * MODO DE COMPORTAMIENTO
- * - Si AUTO_FILL_MISSING === true -> autocompleta campos vacíos
- * - Si AUTO_FILL_MISSING === false -> obliga a llenar los campos requeridos
- */
+
 const AUTO_FILL_MISSING = true; // <-- cambia a false si quieres obligar al usuario
 
 // Helpers de fechas
