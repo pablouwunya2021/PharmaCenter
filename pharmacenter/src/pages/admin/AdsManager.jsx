@@ -1,35 +1,10 @@
-import React, { useState } from "react";
-import "../styles/AdsManager.css"; // 🔹 Importa tus nuevos estilos personalizados
+import React, { useEffect, useState, useCallback } from "react";
+import "../styles/AdsManager.css";
+
+const API = "http://localhost:3000";
 
 const AdsManager = () => {
-  const [ads, setAds] = useState([
-    {
-      idpublicidad: 1,
-      titulo: "Descuento Medicamentos Básicos",
-      descripcion: "15% de descuento en medicamentos esenciales",
-      tipo_publicidad: "descuento",
-      fecha_inicio: "2025-10-01",
-      fecha_fin: "2025-10-31",
-      descuento_porcentaje: 15.0,
-      codigo_promocional: "BASICOS15",
-      activo: true,
-      posicion: 1,
-      imagen_url: "https://via.placeholder.com/120x70.png?text=Promo+1",
-      url_enlace: "https://pharmacenter.com/promos/basicos",
-    },
-    {
-      idpublicidad: 2,
-      titulo: "Campaña Vacunación",
-      descripcion: "Campaña informativa de vacunación gratuita",
-      tipo_publicidad: "informativa",
-      fecha_inicio: "2025-09-15",
-      fecha_fin: "2025-12-31",
-      activo: true,
-      posicion: 2,
-      imagen_url: "https://via.placeholder.com/120x70.png?text=Vacunas",
-    },
-  ]);
-
+  const [ads, setAds] = useState([]);
   const [form, setForm] = useState({
     titulo: "",
     descripcion: "",
@@ -43,53 +18,93 @@ const AdsManager = () => {
     activo: true,
   });
 
+  // 🔹 Cargar todas las publicidades
+  const fetchAds = useCallback(async () => {
+    try {
+      const res = await fetch(`${API}/api/publicidad`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al obtener publicidad");
+      setAds(data.data || []);
+    } catch (err) {
+      console.error("Error al cargar publicidad:", err);
+      setAds([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAds();
+  }, [fetchAds]);
+
+  // 🔹 Manejar cambios del formulario
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
-  const handleAdd = (e) => {
+  // 🔹 Crear nueva publicidad
+  const handleAdd = async (e) => {
     e.preventDefault();
-    const nuevo = {
-      idpublicidad: ads.length + 1,
-      ...form,
-      posicion: ads.length + 1,
-    };
-    setAds((prev) => [...prev, nuevo]);
-    setForm({
-      titulo: "",
-      descripcion: "",
-      tipo_publicidad: "banner",
-      fecha_inicio: "",
-      fecha_fin: "",
-      descuento_porcentaje: "",
-      codigo_promocional: "",
-      imagen_url: "",
-      url_enlace: "",
-      activo: true,
-    });
-  };
+    try {
+      const res = await fetch(`${API}/api/publicidad`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al registrar publicidad");
 
-  const handleDelete = (id) => {
-    if (window.confirm("¿Seguro que deseas eliminar esta publicidad?")) {
-      setAds((prev) => prev.filter((a) => a.idpublicidad !== id));
+      alert("Publicidad creada correctamente ✅");
+      setForm({
+        titulo: "",
+        descripcion: "",
+        tipo_publicidad: "banner",
+        fecha_inicio: "",
+        fecha_fin: "",
+        descuento_porcentaje: "",
+        codigo_promocional: "",
+        imagen_url: "",
+        url_enlace: "",
+        activo: true,
+      });
+      fetchAds();
+    } catch (err) {
+      console.error(err);
+      alert("Error al conectar con el servidor");
     }
   };
 
-  const toggleActivo = (id) => {
-    setAds((prev) =>
-      prev.map((a) =>
-        a.idpublicidad === id ? { ...a, activo: !a.activo } : a
-      )
-    );
+  // 🔹 Eliminar publicidad
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Seguro que deseas eliminar esta publicidad?")) return;
+    try {
+      const res = await fetch(`${API}/api/publicidad/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al eliminar publicidad");
+      fetchAds();
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar publicidad");
+    }
+  };
+
+  // 🔹 Cambiar estado Activo
+  const toggleActivo = async (id, currentState) => {
+    try {
+      const res = await fetch(`${API}/api/publicidad/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activo: !currentState }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      fetchAds();
+    } catch (err) {
+      alert("Error al actualizar estado");
+    }
   };
 
   return (
     <div className="ads-page">
-      {/* ---------- Formulario ---------- */}
       <div className="ads-card">
         <h2>Agregar Nueva Publicidad</h2>
         <form onSubmit={handleAdd} className="ads-form">
@@ -189,7 +204,7 @@ const AdsManager = () => {
         </form>
       </div>
 
-      {/* ---------- Tabla ---------- */}
+      {/* Tabla */}
       <div className="ads-card">
         <table className="ads-table">
           <thead>
@@ -211,16 +226,12 @@ const AdsManager = () => {
                 <td>{a.idpublicidad}</td>
                 <td title={a.descripcion}>{a.titulo}</td>
                 <td>{a.tipo_publicidad}</td>
-                <td>{a.fecha_inicio}</td>
-                <td>{a.fecha_fin}</td>
-                <td>
-                  {a.descuento_porcentaje
-                    ? `${a.descuento_porcentaje}%`
-                    : "—"}
-                </td>
+                <td>{a.fecha_inicio?.slice(0, 10)}</td>
+                <td>{a.fecha_fin?.slice(0, 10)}</td>
+                <td>{a.descuento_porcentaje || "—"}</td>
                 <td>
                   <button
-                    onClick={() => toggleActivo(a.idpublicidad)}
+                    onClick={() => toggleActivo(a.idpublicidad, a.activo)}
                     style={{
                       background: a.activo ? "#2ecc71" : "#bbb",
                       border: "none",
@@ -228,7 +239,6 @@ const AdsManager = () => {
                       borderRadius: 8,
                       padding: "5px 10px",
                       cursor: "pointer",
-                      transition: "background 0.2s ease, transform 0.1s ease",
                     }}
                   >
                     {a.activo ? "Activo" : "Inactivo"}
@@ -245,14 +255,7 @@ const AdsManager = () => {
                         objectFit: "cover",
                         borderRadius: 8,
                         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                        transition: "transform 0.2s ease",
                       }}
-                      onMouseOver={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.05)")
-                      }
-                      onMouseOut={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
                     />
                   ) : (
                     "—"
@@ -276,5 +279,4 @@ const AdsManager = () => {
 };
 
 export default AdsManager;
-
 
