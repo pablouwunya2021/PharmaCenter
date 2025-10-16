@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../styles/Inventory.css"; // Reutilizamos las animaciones y estilos base
 
 const AdsManager = () => {
   const [ads, setAds] = useState([
@@ -84,32 +85,24 @@ const AdsManager = () => {
   };
 
   return (
-    <section style={{ padding: 20 }}>
-      <h1 style={{ color: "#4a2c75", fontWeight: 800, marginBottom: 10 }}>
-        Gestión de Publicidad
-      </h1>
-
-      {/* FORMULARIO */}
-      <div
-        style={{
-          background: "#fff",
-          padding: 20,
-          borderRadius: 12,
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-          marginBottom: 25,
-        }}
-      >
-        <h2 style={{ marginBottom: 10, color: "#5c3c92" }}>Añadir Nueva Publicidad</h2>
-        <form
-          onSubmit={handleAdd}
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}
-        >
+    <div className="inventory-page">
+      <div className="card add-med-form" style={{ animation: "fadeIn 0.4s ease" }}>
+        <h2>Agregar Nueva Publicidad</h2>
+        <form onSubmit={handleAdd}>
           <input
             name="titulo"
             placeholder="Título"
             value={form.titulo}
             onChange={handleChange}
             required
+          />
+          <textarea
+            name="descripcion"
+            placeholder="Descripción"
+            value={form.descripcion}
+            onChange={handleChange}
+            rows={3}
+            style={{ resize: "none" }}
           />
           <select
             name="tipo_publicidad"
@@ -164,7 +157,7 @@ const AdsManager = () => {
             onChange={handleChange}
           />
 
-          <label style={{ gridColumn: "1 / 3" }}>
+          <label>
             <input
               type="checkbox"
               name="activo"
@@ -174,27 +167,13 @@ const AdsManager = () => {
             Activo
           </label>
 
-          <button
-            type="submit"
-            style={{
-              gridColumn: "1 / 3",
-              background: "#5c3c92",
-              color: "white",
-              border: "none",
-              padding: "10px 15px",
-              borderRadius: 8,
-              cursor: "pointer",
-            }}
-          >
-            Añadir Publicidad
-          </button>
+          <button type="submit">Guardar Publicidad</button>
         </form>
       </div>
 
-      {/* TABLA */}
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead style={{ background: "#ede7f6", color: "#4a2c75" }}>
+      <div className="card" style={{ animation: "fadeInUp 0.4s ease" }}>
+        <table className="inventory-table">
+          <thead>
             <tr>
               <th>ID</th>
               <th>Título</th>
@@ -211,22 +190,41 @@ const AdsManager = () => {
             {ads.map((a) => (
               <tr key={a.idpublicidad}>
                 <td>{a.idpublicidad}</td>
-                <td>{a.titulo}</td>
+                <td title={a.descripcion}>{a.titulo}</td>
                 <td>{a.tipo_publicidad}</td>
                 <td>{a.fecha_inicio}</td>
                 <td>{a.fecha_fin}</td>
-                <td>{a.descuento_porcentaje ? `${a.descuento_porcentaje}%` : "—"}</td>
+                <td>
+                  {a.descuento_porcentaje ? `${a.descuento_porcentaje}%` : "—"}
+                </td>
                 <td>
                   <button
                     onClick={() => toggleActivo(a.idpublicidad)}
                     style={{
-                      background: a.activo ? "#28a745" : "#aaa",
-                      color: "#fff",
+                      background: a.activo ? "#2ecc71" : "#bbb",
                       border: "none",
-                      borderRadius: 6,
-                      padding: "4px 8px",
+                      color: "#fff",
+                      borderRadius: 8,
+                      padding: "5px 10px",
                       cursor: "pointer",
+                      transition: "background 0.2s ease, transform 0.1s ease",
                     }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.background = a.activo
+                        ? "#27ae60"
+                        : "#999")
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.background = a.activo
+                        ? "#2ecc71"
+                        : "#bbb")
+                    }
+                    onMouseDown={(e) =>
+                      (e.currentTarget.style.transform = "scale(0.96)")
+                    }
+                    onMouseUp={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
                   >
                     {a.activo ? "Activo" : "Inactivo"}
                   </button>
@@ -237,27 +235,49 @@ const AdsManager = () => {
                       src={a.imagen_url}
                       alt={a.titulo}
                       style={{
-                        width: 100,
-                        height: 60,
+                        width: 80,
+                        height: 50,
                         objectFit: "cover",
                         borderRadius: 8,
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                        transition: "transform 0.2s ease",
                       }}
+                      onMouseOver={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.05)")
+                      }
+                      onMouseOut={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
                     />
                   ) : (
                     "—"
                   )}
                 </td>
-                <td>
+                <td className="actions-cell">
                   <button
                     onClick={() => handleDelete(a.idpublicidad)}
                     style={{
-                      background: "#e03131",
-                      color: "#fff",
+                      backgroundColor: "#e03131",
                       border: "none",
-                      padding: "6px 10px",
-                      borderRadius: 6,
+                      color: "#fff",
+                      padding: "8px 14px",
+                      borderRadius: "10px",
                       cursor: "pointer",
+                      fontSize: "0.9rem",
+                      transition: "background-color .2s ease, transform .1s ease",
                     }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#c92a2a")
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#e03131")
+                    }
+                    onMouseDown={(e) =>
+                      (e.currentTarget.style.transform = "scale(0.96)")
+                    }
+                    onMouseUp={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
                   >
                     🗑 Eliminar
                   </button>
@@ -267,8 +287,9 @@ const AdsManager = () => {
           </tbody>
         </table>
       </div>
-    </section>
+    </div>
   );
 };
 
 export default AdsManager;
+
