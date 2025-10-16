@@ -23,7 +23,7 @@ ON CONFLICT DO NOTHING;
 -- 3. Migrar datos: asignar idproveedor según el nombre del proveedor
 UPDATE medicamento SET idproveedor = (
   SELECT idproveedor FROM proveedores WHERE nombre = 'Farfasa' LIMIT 1
-) WHERE proveedor = 'Farfasa';
+) WHERE proveedor = 'Farfasa' OR proveedor = 'Farfas';
 
 UPDATE medicamento SET idproveedor = (
   SELECT idproveedor FROM proveedores WHERE nombre = 'Laboratorios Laprin' LIMIT 1
@@ -40,6 +40,11 @@ UPDATE medicamento SET idproveedor = (
 UPDATE medicamento SET idproveedor = (
   SELECT idproveedor FROM proveedores WHERE nombre = 'Laboratorios Vijosa' LIMIT 1
 ) WHERE proveedor = 'Laboratorios Vijosa';
+
+-- Asignar proveedor por defecto a medicamentos sin proveedor
+UPDATE medicamento SET idproveedor = (
+  SELECT idproveedor FROM proveedores LIMIT 1
+) WHERE idproveedor IS NULL;
 
 -- 4. Hacer la columna NOT NULL
 ALTER TABLE medicamento 
