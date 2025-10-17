@@ -468,6 +468,102 @@ app.delete('/api/usuarios/:id', verifyToken, verifyRole('admin'), async (req, re
   }
 });
 
+// ================== USUARIOS SIN PROTECCIÓN (TEMPORAL - NO RECOMENDADO) =========================
+
+// GET: Obtener todos los usuarios (SIN PROTECCIÓN)
+app.get('/api/usuarios/public/list', async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT idusuario, nombre, correo, rol FROM Usuario ORDER BY idusuario ASC'
+    );
+    
+    res.json({
+      success: true,
+      data: result.rows
+    });
+  } catch (err) {
+    console.error('Error al obtener usuarios:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Error interno del servidor',
+      details: err.message 
+    });
+  }
+});
+
+// DELETE: Eliminar usuario (SIN PROTECCIÓN - Solo usuarios NO admin)
+app.delete('/api/usuarios/public/delete/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Verificar si el usuario existe
+    const userExists = await db.query(
+      'SELECT idusuario, rol FROM Usuario WHERE idusuario = $1',
+      [id]
+    );
+    
+    if (userExists.rows.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Usuario no encontrado' 
+      });
+    }
+
+    // PROTECCIÓN: No permitir eliminar administradores
+    if (userExists.rows[0].rol === 'admin') {
+      return res.status(403).json({ 
+        success: false, 
+        error: 'No se pueden eliminar usuarios administradores' 
+      });
+    }
+
+    // Eliminar el usuario
+    await db.query('DELETE FROM Usuario WHERE idusuario = $1', [id]);
+
+    res.json({ 
+      success: true, 
+      message: 'Usuario eliminado exitosamente' 
+    });
+  } catch (err) {
+    console.error('Error al eliminar usuario:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Error interno del servidor',
+      details: err.message 
+    });
+  }
+});
+
+// GET: Obtener un usuario específico por ID (SIN PROTECCIÓN)
+app.get('/api/usuarios/public/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await db.query(
+      'SELECT idusuario, nombre, correo, rol FROM Usuario WHERE idusuario = $1', 
+      [id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Usuario no encontrado' 
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Error al obtener usuario:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Error interno del servidor',
+      details: err.message 
+    });
+  }
+});
 
 // ================== Publicidad=========================
 app.get('/api/publicidad', async (req, res) => {
