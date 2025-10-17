@@ -851,6 +851,71 @@ app.delete('/api/publicidad/:id', async (req, res) => {
     });
   }
 });
+//=================== Login =========================
+
+// Login
+app.post('/api/login', async (req, res) => {
+  const { correo, contrasena } = req.body;
+
+  if (!correo || !contrasena) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Correo y contraseña son requeridos' 
+    });
+  }
+
+  try {
+    const result = await db.query(
+      'SELECT * FROM Usuario WHERE correo = $1',
+      [correo]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Credenciales inválidas' 
+      });
+    }
+
+    const user = result.rows[0];
+    const match = await bcrypt.compare(contrasena, user.contrasena);
+
+    if (!match) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Credenciales inválidas' 
+      });
+    }
+
+    const token = jwt.sign(
+      { 
+        idUsuario: user.idusuario, 
+        correo: user.correo, 
+        rol: user.rol 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    res.json({ 
+      success: true, 
+      message: 'Login exitoso',
+      token,
+      user: {
+        idUsuario: user.idusuario,
+        nombre: user.nombre,
+        correo: user.correo,
+        rol: user.rol
+      }
+    });
+  } catch (err) {
+    console.error('Error en login:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error interno del servidor' 
+    });
+  }
+});
 
 //========================Signup===================
 app.post('/api/signup', async (req, res) => {
