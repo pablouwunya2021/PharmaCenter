@@ -1,0 +1,26 @@
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Env
+.env
+.env.*
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Config files que no se necesitan en build
+.eslintrc*
+.prettierrc*
+README.md
