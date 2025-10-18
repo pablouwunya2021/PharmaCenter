@@ -4,6 +4,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: postgres
+    restart: unless-stopped
     environment:
       POSTGRES_USER: pharma_user
       POSTGRES_PASSWORD: pharma_password123
@@ -17,29 +18,38 @@ services:
       - pharmanetwork
 
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: pharmacenter_api
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
+      # Variables para Docker (sobreescriben el .env)
       DB_HOST: postgres
+      DB_PORT: 5432
       DB_USER: pharma_user
       DB_PASSWORD: pharma_password123
       DB_NAME: pharmacenter_db
-      DB_PORT: 5432
-      JWT_SECRET: mi_clave_secreta_jwt_muy_segura_para_pharmacenter_2024_cambiar_en_produccion
+      JWT_SECRET: equipopharmacenter2024
       NODE_ENV: development
+      # Variables de email desde .env del backend
+      EMAIL_USER: ${EMAIL_USER:-notipharmacenter@gmail.com}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      ALERT_RECIPIENTS: ${ALERT_RECIPIENTS}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - pharmanetwork
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
 
   frontend:
-    build: ./pharmacenter
+    build:
+      context: ./pharmacenter
+      dockerfile: Dockerfile
     container_name: pharmacenter_frontend
+    restart: unless-stopped
     ports:
       - "8081:80"
     depends_on:
@@ -53,3 +63,4 @@ networks:
 
 volumes:
   postgres_data:
+    driver: local
