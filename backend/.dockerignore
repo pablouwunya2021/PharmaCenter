@@ -1,0 +1,44 @@
+# Dependencias
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Tests
+coverage
+test-results
+*.test.js
+__tests__
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Env files (se pasan por docker-compose)
+.env
+.env.*
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Docs
+README.md
+docs/
