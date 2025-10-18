@@ -9,6 +9,16 @@ RUN npm ci --only=production && \
 FROM node:22-alpine AS production
 WORKDIR /app
 
+# Usuario no-root para seguridad
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Copiar dependencias y código
+COPY --from=dependencies --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --chown=nodejs:nodejs . .
+
+USER nodejs
+
 EXPOSE 3000
 
 # Healthcheck simple (verifica que el puerto esté abierto)
