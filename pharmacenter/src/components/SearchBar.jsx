@@ -50,7 +50,7 @@ function SearchBar() {
 
   // Manejar navegación a detalle del medicamento
   const handleResultClick = (medicamento) => {
-    navigate(`/medicamento/${medicamento.idmedicamento}`);
+    navigate(`/compra/${medicamento.idmedicamento}`);
     clearSearch();
   };
 
