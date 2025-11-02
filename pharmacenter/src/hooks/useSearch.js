@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const useSearch = (apiUrl = '/api/medicamentos') => {
+const useSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [allMedicamentos, setAllMedicamentos] = useState([]);
@@ -13,7 +13,7 @@ const useSearch = (apiUrl = '/api/medicamentos') => {
     const fetchMedicamentos = async () => {
       try {
         setLoading(true);
-        const response = await fetch(apiUrl);
+        const response = await fetch('http://localhost:3000/api/medicamentos');
         if (!response.ok) {
           throw new Error('Error al cargar los medicamentos');
         }
@@ -29,7 +29,7 @@ const useSearch = (apiUrl = '/api/medicamentos') => {
     };
 
     fetchMedicamentos();
-  }, [apiUrl]);
+  }, []);
 
   // Filtrar medicamentos basado en el término de búsqueda
   const filterMedicamentos = useCallback(() => {
