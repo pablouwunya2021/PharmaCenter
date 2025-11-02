@@ -1,21 +1,28 @@
 // src/components/CartTotal.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ClearCartButton from './ClearCartButton';
-import { Link } from "react-router-dom";
 
 const CartTotal = ({ total }) => {
   return (
     <div className="summary-section summary-center">
       <h3>Total</h3>
       <p className="summary-amount">${total.toFixed(2)}</p>
-      <div style={{ marginTop: 12 }}>
+
+      <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
         <ClearCartButton />
+
+        <Link to="/facturacion" style={{ textDecoration: 'none' }}>
+          <button
+            type="button"
+            className="checkout-btn"
+            aria-label="Ir a facturación"
+          >
+            Ir a Facturación
+          </button>
+        </Link>
       </div>
-      <Link to="/facturacion">
-  <button style={{ marginTop: 10 }}>Ir a Facturación</button>
-</Link>
     </div>
-    
   );
 };
 
