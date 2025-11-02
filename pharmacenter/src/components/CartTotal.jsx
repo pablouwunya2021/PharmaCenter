@@ -1,6 +1,7 @@
 // src/components/CartTotal.jsx
 import React from 'react';
 import ClearCartButton from './ClearCartButton';
+import { Link } from "react-router-dom";
 
 const CartTotal = ({ total }) => {
   return (
