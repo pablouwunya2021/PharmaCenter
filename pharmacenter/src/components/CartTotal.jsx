@@ -11,7 +11,11 @@ const CartTotal = ({ total }) => {
       <div style={{ marginTop: 12 }}>
         <ClearCartButton />
       </div>
+      <Link to="/facturacion">
+  <button style={{ marginTop: 10 }}>Ir a Facturación</button>
+</Link>
     </div>
+    
   );
 };
 
