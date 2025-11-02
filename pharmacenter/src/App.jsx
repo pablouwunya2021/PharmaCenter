@@ -28,6 +28,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/cart" element={<MainLayout><Cart /></MainLayout>} />
+      <Route path="/facturacion" element={<MainLayout><FacturacionPage /></MainLayout>} />
       <Route path="/login" element={<MainLayout><LoginPage /></MainLayout>} />
       <Route path="/compra/:id" element={<MainLayout><CompraPage /></MainLayout>} />
 
