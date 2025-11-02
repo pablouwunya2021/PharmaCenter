@@ -9,19 +9,24 @@ const CartTotal = ({ total }) => {
       <h3>Total</h3>
       <p className="summary-amount">${total.toFixed(2)}</p>
 
-      <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
-        <ClearCartButton />
+      <div
+  style={{
+    display: 'flex',
+    gap: 12,
+    marginTop: 12,
+    flexWrap: 'wrap',
+    justifyContent: 'center',   // 👈 centra horizontalmente
+    alignItems: 'center'         // 👈 opcional: alinea vertical
+  }}
+>
+  <ClearCartButton />
+  <Link to="/facturacion" style={{ textDecoration: 'none' }}>
+    <button type="button" className="checkout-btn" aria-label="Ir a facturación">
+      Ir a Facturación
+    </button>
+  </Link>
+</div>
 
-        <Link to="/facturacion" style={{ textDecoration: 'none' }}>
-          <button
-            type="button"
-            className="checkout-btn"
-            aria-label="Ir a facturación"
-          >
-            Ir a Facturación
-          </button>
-        </Link>
-      </div>
     </div>
   );
 };

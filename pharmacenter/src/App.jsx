@@ -6,12 +6,12 @@ import LoginPage from './pages/LoginPage';
 import CompraPage from './pages/CompraPage';
 import Inventory from './pages/Inventory';
 import Header from './components/Header';
+import FacturacionPage from './pages/FacturacionPage';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UsersCrud from './pages/admin/UsersCrud';
-import FacturacionPage from './pages/FacturacionPage';
 
 import AdsManager from './pages/admin/AdsManager';
 
