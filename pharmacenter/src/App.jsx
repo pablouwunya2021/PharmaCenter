@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UsersCrud from './pages/admin/UsersCrud';
+import FacturacionPage from './pages/FacturacionPage';
 
 import AdsManager from './pages/admin/AdsManager';
 
