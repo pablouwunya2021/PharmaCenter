@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import CartButton from './CartButton';
 import './Header.css';
 import logo from '../assets/logo.png'; // Asegúrate de que la ruta sea correcta
+import SearchBar from './SearchBar'; 
 
 function Header() {
   const [user, setUser] = useState(null);
@@ -55,6 +56,8 @@ function Header() {
           </Link>
         </div>
       </div>
+      
+      <SearchBar />
 
       {/* Navegación central */}
       <nav className="header-nav">
