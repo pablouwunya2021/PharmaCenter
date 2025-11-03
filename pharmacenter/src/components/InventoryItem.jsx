@@ -227,10 +227,10 @@ const InventoryItem = ({ item, onChanged }) => {
       onMouseEnter={() => setIsRowHovered(true)}
       onMouseLeave={() => setIsRowHovered(false)}
     >
-      <td>{localNombre}</td>
+      <td data-label="Nombre">{localNombre}</td>
       
       {/* COLUMNA DE CANTIDAD CON CONTROLES */}
-      <td>
+      <td data-label="Cantidad">
         {editingQuantity ? (
           <input
             type="text"
@@ -291,11 +291,11 @@ const InventoryItem = ({ item, onChanged }) => {
         )}
       </td>
 
-      <td>{fechaLegible}</td>
-      <td>{Number.isFinite(+precio) ? `$${(+precio).toFixed(2)}` : precio}</td>
-      <td>{Number.isFinite(+costo) ? `$${(+costo).toFixed(2)}` : costo}</td>
-      <td>{proveedor}</td>
-      <td>
+      <td data-label="Vencimiento">{fechaLegible}</td>
+      <td data-label="Precio">{Number.isFinite(+precio) ? `$${(+precio).toFixed(2)}` : precio}</td>
+      <td data-label="Costo">{Number.isFinite(+costo) ? `$${(+costo).toFixed(2)}` : costo}</td>
+      <td data-label="Proveedor">{proveedor}</td>
+      <td data-label="Imagen">
         {imagenurl ? (
           <img
             src={imagenurl}
@@ -308,7 +308,7 @@ const InventoryItem = ({ item, onChanged }) => {
       </td>
 
       {/* ACCIONES */}
-      <td className="actions-cell">
+      <td data-label="Acciones" className="actions-cell">
         <button
           onClick={handleRename}
           disabled={renaming || deleting || updatingQuantity}

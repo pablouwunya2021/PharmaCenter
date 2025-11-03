@@ -1,3 +1,7 @@
+.inventory-page {
+  padding: 0;
+}
+
 .inventory-table tbody tr {
   transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
   transform-origin: center;
@@ -75,8 +79,104 @@
 }
 
 @media (max-width: 768px) {
+  .inventory-page {
+    padding: 0;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+    border-radius: 12px;
+  }
+
   .inventory-table tbody tr:hover {
     transform: scale(1.015);
     box-shadow: 0 4px 12px rgba(112, 88, 154, 0.2);
+  }
+
+  /* Ocultar thead en móvil */
+  .inventory-table thead {
+    display: none;
+  }
+
+  /* Convertir tabla a cards en móvil */
+  .inventory-table,
+  .inventory-table tbody,
+  .inventory-table tr,
+  .inventory-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .inventory-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid #e0d4f7;
+    border-radius: 12px;
+    padding: 1rem;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(112, 88, 154, 0.1);
+  }
+
+  .inventory-table td {
+    text-align: left;
+    padding: 0.5rem 0;
+    border: none;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .inventory-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 45%;
+    padding-right: 10px;
+    font-weight: 600;
+    color: #70589a;
+    text-align: left;
+  }
+
+  /* Ajustar columna de acciones en móvil */
+  .actions-cell {
+    flex-direction: column;
+    padding-left: 0 !important;
+  }
+
+  .actions-cell::before {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .actions-cell button {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  /* Ajustar imagen en móvil */
+  .inventory-table img {
+    max-width: 100px;
+    max-height: 70px;
+  }
+
+  /* Ajustar controles de cantidad en móvil */
+  .quantity-control {
+    justify-content: flex-start;
+  }
+
+  /* Formulario de agregar en móvil */
+  .add-med-form {
+    padding: 1rem;
+  }
+
+  .add-med-form h2 {
+    font-size: 1.25rem;
+  }
+
+  .add-med-form input,
+  .add-med-form button {
+    padding: 0.6rem;
+    font-size: 0.9rem;
   }
 }
