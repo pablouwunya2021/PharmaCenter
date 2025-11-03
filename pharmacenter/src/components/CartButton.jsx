@@ -7,7 +7,11 @@ const CartButton = () => {
 
   return (
     <div className="cart-button-container">
-      <button className="cart-button" onClick={() => navigate('/cart')}>
+      <button 
+        className="cart-button" 
+        onClick={() => navigate('/cart')}
+        aria-label="Ver carrito de compras"
+      >
         🛒
       </button>
     </div>
@@ -15,4 +19,3 @@ const CartButton = () => {
 };
 
 export default CartButton;
-

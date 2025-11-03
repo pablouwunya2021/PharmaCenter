@@ -1,4 +1,4 @@
-/* Header moderno y responsivo - Estilo developer.com */
+/* Header moderno y responsivo */
 .header {
   display: flex;
   align-items: center;
@@ -22,45 +22,17 @@
   gap: 15px;
 }
 
-/* Botón del sidebar */
-.header #openSidebar {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 10px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  height: 44px;
-  opacity: 0;
-
-}
-
-.header #openSidebar:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
 /* Brand container */
 .header-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  left: 20px
 }
 
 .header-logo {
   height: 40px;
   width: auto;
   transition: transform 0.3s ease;
-  left: 20px;
 }
 
 .header-logo:hover {
@@ -75,7 +47,6 @@
   letter-spacing: -0.5px;
   margin: 0;
   transition: opacity 0.3s ease;
-  left: 20px;
 }
 
 .header-title:hover {
@@ -124,6 +95,34 @@
   display: flex;
   align-items: center;
   gap: 15px;
+}
+
+/* Botón toggle usuario (oculto en desktop) */
+.user-toggle-btn {
+  display: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+}
+
+.user-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Desktop - Info usuario */
+.desktop-only {
+  display: flex;
 }
 
 .header-user-info {
@@ -181,7 +180,12 @@
   transform: translateY(0);
 }
 
-/* Botones de auth para usuarios no logueados */
+/* Menú móvil usuario (oculto por defecto) */
+.user-menu-mobile {
+  display: none;
+}
+
+/* Botones de auth */
 .header-auth-buttons {
   display: flex;
   gap: 12px;
@@ -227,7 +231,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Efectos adicionales */
+/* Efecto header */
 .header::before {
   content: '';
   position: absolute;
@@ -238,7 +242,10 @@
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
 }
 
-/* Responsivo */
+/* ============================================ */
+/* RESPONSIVE - TABLET Y MÓVIL */
+/* ============================================ */
+
 @media (max-width: 1024px) {
   .header {
     padding: 0.75rem 1.5rem;
@@ -282,10 +289,137 @@
     padding: 8px 12px;
     font-size: 12px;
   }
-  
-  .header-user-info {
-    font-size: 12px;
-    padding: 8px 14px;
+
+  /* MOSTRAR botón toggle */
+  .user-toggle-btn {
+    display: flex;
+  }
+
+  /* OCULTAR versión desktop */
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* MOSTRAR menú móvil */
+  .user-menu-mobile {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .user-menu-mobile.open {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  /* Wrapper del menú */
+  .user-menu-wrapper {
+    position: relative;
+    z-index: 2001;
+    background: linear-gradient(135deg, #5c3c92 0%, #7b68a2 100%);
+    padding: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Header del menú móvil */
+  .user-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+  }
+
+  .user-info-mobile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+  }
+
+  .user-info-mobile svg {
+    flex-shrink: 0;
+  }
+
+  .user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .user-greeting {
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+  }
+
+  .user-menu-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 18px;
+    transition: all 0.2s ease;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .user-menu-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Contenido del menú */
+  .user-menu-content {
+    margin-top: 16px;
+  }
+
+  .user-menu-logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 14px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .user-menu-logout:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .user-menu-logout svg {
+    flex-shrink: 0;
+  }
+
+  /* Overlay */
+  .user-menu-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    backdrop-filter: blur(4px);
   }
   
   .header-auth-buttons {
@@ -339,7 +473,6 @@
   
   .header-nav {
     gap: 8px;
-    
   }
   
   .header-nav a,
@@ -356,13 +489,22 @@
     height: 24px;
   }
   
-  .header-user-section {
-    gap: 6px;
-  }
-  
   .header-login-btn,
   .header-signup-btn {
     padding: 6px 10px;
     font-size: 11px;
+  }
+
+  .user-menu-wrapper {
+    padding: 12px;
+  }
+
+  .user-greeting {
+    font-size: 14px;
+  }
+
+  .user-menu-logout {
+    padding: 12px 14px;
+    font-size: 14px;
   }
 }
