@@ -1,11 +1,20 @@
 // src/components/ProductoCard.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import '../styles/compra.css';
 
 function ProductoCard({ producto }) {
   const [cantidad, setCantidad] = useState(1);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const { addToCart } = useCart();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -48,25 +57,30 @@ function ProductoCard({ producto }) {
 
           <div className="product-card-info-section">
             <h2 className="product-title">{producto.nombre}</h2>
-            <p className="product-provider">Proveedor: {producto.proveedor}</p>
-            <p className="product-price"><strong>Precio:</strong> ${producto.precio.toFixed(2)}</p>
+            <p className="product-provider">
+              <strong>Proveedor:</strong> {producto.proveedor}
+            </p>
+            <p className="product-price">
+              <strong>Precio:</strong> ${producto.precio.toFixed(2)}
+            </p>
             <p className="product-stock">
               <strong>Disponible:</strong> {producto.cantidadInventario > 0 ? producto.cantidadInventario : 'Cantidad no disponible'}
             </p>
 
             <form onSubmit={handleAddToCart} className="product-form">
               <label className="form-label">
-                Cantidad a comprar:
+                {isMobile ? 'Cantidad:' : 'Cantidad a comprar:'}
                 <input
                   type="number"
                   min="1"
+                  max={producto.cantidadInventario || 999}
                   value={cantidad}
                   onChange={e => setCantidad(Number(e.target.value))}
                   className="form-input"
                 />
               </label>
               <button type="submit" className="form-button">
-                Agregar al carrito
+                {isMobile ? '🛒 Agregar' : '🛒 Agregar al carrito'}
               </button>
             </form>
           </div>
