@@ -9,7 +9,7 @@
   transform: scale(1.03);
   box-shadow: 0 6px 20px rgba(112, 88, 154, 0.25);
   background-color: #faf9fc !important; /* Override del nth-child */
-  z-index: 5;
+  z-index: 10;
 }
 
 .inventory-table tbody tr:nth-child(even) {
@@ -70,7 +70,7 @@
 .actions-cell button {
   white-space: nowrap;
   position: relative;
-  z-index: 6;
+  z-index: 15;
   pointer-events: auto;
 }
 
