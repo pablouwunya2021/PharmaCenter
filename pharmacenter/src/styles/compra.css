@@ -170,3 +170,273 @@
   outline-offset: 2px;
 }
 
+/* ============================================ */
+/* RESPONSIVE - DISEÑO ADAPTATIVO COMPLETO */
+/* ============================================ */
+
+/* Tablet - 768px a 1024px */
+@media (max-width: 1024px) {
+  .compra-overlay {
+    padding: 1.5rem;
+  }
+
+  .product-card {
+    padding: 1.75rem;
+    max-width: 700px;
+  }
+
+  .product-card-content {
+    gap: 1.5rem;
+  }
+
+  .product-title {
+    font-size: 1.6rem;
+  }
+
+  .product-provider,
+  .product-price,
+  .product-stock {
+    font-size: 0.95rem;
+  }
+
+  .product-image {
+    max-height: 300px;
+  }
+}
+
+/* Móvil grande - 640px a 768px */
+@media (max-width: 768px) {
+  .compra-page {
+    background-attachment: scroll;
+  }
+
+  .compra-overlay {
+    padding: 1rem;
+    backdrop-filter: blur(3px);
+  }
+
+  .product-card {
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    max-width: 100%;
+  }
+
+  .product-card-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .product-card-image-section,
+  .product-card-info-section {
+    flex: 1;
+    width: 100%;
+  }
+
+  .product-card-info-section {
+    align-items: center;
+    text-align: center;
+  }
+
+  .product-image {
+    width: 80%;
+    max-height: 280px;
+  }
+
+  .product-title {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .product-provider,
+  .product-price,
+  .product-stock {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .product-form {
+    width: 100%;
+    margin-top: 1.25rem;
+  }
+
+  .form-label {
+    text-align: center;
+    width: 100%;
+  }
+
+  .form-input {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  .form-button {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Móvil pequeño - 480px a 640px */
+@media (max-width: 640px) {
+  .compra-overlay {
+    padding: 0.75rem;
+  }
+
+  .product-card {
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+  }
+
+  .product-card-content {
+    gap: 1.25rem;
+  }
+
+  .product-image {
+    width: 75%;
+    max-height: 240px;
+  }
+
+  .product-title {
+    font-size: 1.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .product-provider,
+  .product-price,
+  .product-stock {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .product-form {
+    gap: 0.875rem;
+    margin-top: 1rem;
+  }
+
+  .form-input {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9rem;
+  }
+
+  .form-button {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Móvil muy pequeño - menos de 480px */
+@media (max-width: 480px) {
+  .compra-overlay {
+    padding: 0.5rem;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding-top: 1rem;
+  }
+
+  .product-card {
+    padding: 1rem;
+    border-radius: 1rem;
+    max-width: 100%;
+    box-shadow: 0 8px 30px rgba(124, 58, 237, 0.25);
+  }
+
+  .product-card-content {
+    gap: 1rem;
+  }
+
+  .product-image {
+    width: 100%;
+    max-height: 200px;
+  }
+
+  .product-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .product-provider,
+  .product-price,
+  .product-stock {
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .product-form {
+    gap: 0.75rem;
+    margin-top: 0.875rem;
+  }
+
+  .form-label {
+    font-size: 0.875rem;
+  }
+
+  .form-input {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 0.5rem;
+  }
+
+  .form-button,
+  .checkout-btn {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 0.5rem;
+  }
+
+  .form-button:hover,
+  .checkout-btn:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* Landscape en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+  .compra-overlay {
+    padding: 1rem 2rem;
+    align-items: center;
+  }
+
+  .product-card-content {
+    flex-direction: row;
+  }
+
+  .product-card-image-section {
+    flex: 0.8;
+  }
+
+  .product-card-info-section {
+    flex: 1.2;
+  }
+
+  .product-image {
+    max-height: 220px;
+  }
+}
+
+@media (max-width: 480px) and (orientation: landscape) {
+  .product-card {
+    padding: 0.75rem;
+  }
+
+  .product-card-content {
+    gap: 0.75rem;
+  }
+
+  .product-image {
+    max-height: 180px;
+  }
+
+  .product-title {
+    font-size: 1.1rem;
+  }
+
+  .product-provider,
+  .product-price,
+  .product-stock {
+    font-size: 0.75rem;
+  }
+
+  .product-form {
+    gap: 0.5rem;
+  }
+}
