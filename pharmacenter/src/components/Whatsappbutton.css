@@ -1,0 +1,126 @@
+/* Botón flotante de WhatsApp */
+
+.whatsapp-button {
+  position: fixed;
+  bottom: 20px;
+  right: 90px; /* Posicionado a la izquierda del botón del carrito */
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #25d366 0%, #20ba5a 100%);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  transition: all 0.3s ease;
+  z-index: 997; /* Uno menos que el carrito para que esté detrás */
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.whatsapp-button:hover {
+  background: linear-gradient(135deg, #20ba5a 0%, #1da851 100%);
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+}
+
+.whatsapp-button:active {
+  transform: scale(0.95);
+}
+
+.whatsapp-icon {
+  width: 32px;
+  height: 32px;
+  color: white;
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Efecto de pulso suave */
+@keyframes pulsate {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.6);
+  }
+}
+
+.whatsapp-button {
+  animation: fadeInUp 0.5s ease-out, pulsate 2.5s ease-in-out infinite;
+}
+
+/* Responsive: Tablets */
+@media (max-width: 1024px) {
+  .whatsapp-button {
+    width: 56px;
+    height: 56px;
+    right: 85px;
+  }
+
+  .whatsapp-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .whatsapp-button {
+    width: 54px;
+    height: 54px;
+    right: 80px;
+  }
+
+  .whatsapp-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Responsive: Móviles */
+@media (max-width: 640px) {
+  .whatsapp-button {
+    width: 56px;
+    height: 56px;
+    bottom: 20px;
+    right: 90px; /* A la izquierda del carrito */
+  }
+
+  .whatsapp-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .whatsapp-button {
+    width: 52px;
+    height: 52px;
+    bottom: 16px;
+    right: 80px;
+  }
+
+  .whatsapp-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Accesibilidad: reducir animaciones si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-button {
+    animation: none;
+  }
+}

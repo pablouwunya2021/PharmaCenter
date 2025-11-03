@@ -7,6 +7,7 @@ import CompraPage from './pages/CompraPage';
 import Inventory from './pages/Inventory';
 import Header from './components/Header';
 import FacturacionPage from './pages/FacturacionPage';
+import WhatsAppButton from './components/Whatsappbutton'; 
 
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
@@ -24,30 +25,35 @@ const MainLayout = ({ children }) => (
 
 function App() {
   return (
-    <Routes>
-      {/* Público */}
-      <Route path="/" element={<Home />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/cart" element={<MainLayout><Cart /></MainLayout>} />
-      <Route path="/facturacion" element={<MainLayout><FacturacionPage /></MainLayout>} />
-      <Route path="/login" element={<MainLayout><LoginPage /></MainLayout>} />
-      <Route path="/compra/:id" element={<MainLayout><CompraPage /></MainLayout>} />
+    <>
+      <Routes>
+        {/* Público */}
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/cart" element={<MainLayout><Cart /></MainLayout>} />
+        <Route path="/facturacion" element={<MainLayout><FacturacionPage /></MainLayout>} />
+        <Route path="/login" element={<MainLayout><LoginPage /></MainLayout>} />
+        <Route path="/compra/:id" element={<MainLayout><CompraPage /></MainLayout>} />
 
-      {/* Panel Admin (solo admins) */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute role="admin">
-            <AdminLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<AdminDashboard />} />
-        <Route path="inventory" element={<Inventory />} />
-        <Route path="users" element={<UsersCrud />} />
-        <Route path="ads" element={<AdsManager />} />
-      </Route>
-    </Routes>
+        {/* Panel Admin (solo admins) */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="inventory" element={<Inventory />} />
+          <Route path="users" element={<UsersCrud />} />
+          <Route path="ads" element={<AdsManager />} />
+        </Route>
+      </Routes>
+
+      {/* Botón flotante de WhatsApp - visible en TODAS las páginas */}
+      <WhatsAppButton />
+    </>
   );
 }
 
