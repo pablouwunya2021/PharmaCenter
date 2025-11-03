@@ -312,15 +312,15 @@ const AdsManager = () => {
 
               return (
                 <tr key={rowId}>
-                  <td>{rowId}</td>
-                  <td title={a.descripcion || ""}>{a.titulo}</td>
-                  <td>{a.tipo_publicidad}</td>
-                  <td>{a.fecha_inicio ? a.fecha_inicio.slice(0, 10) : "—"}</td>
-                  <td>{a.fecha_fin ? a.fecha_fin.slice(0, 10) : "—"}</td>
-                  <td>{a.descuento_porcentaje ?? "—"}</td>
+                  <td data-label="ID">{rowId}</td>
+                  <td data-label="Título" title={a.descripcion || ""}>{a.titulo}</td>
+                  <td data-label="Tipo">{a.tipo_publicidad}</td>
+                  <td data-label="Inicio">{a.fecha_inicio ? a.fecha_inicio.slice(0, 10) : "—"}</td>
+                  <td data-label="Fin">{a.fecha_fin ? a.fecha_fin.slice(0, 10) : "—"}</td>
+                  <td data-label="Descuento">{a.descuento_porcentaje ?? "—"}</td>
 
                   {/* Activo solo visual (badge) */}
-                  <td>
+                  <td data-label="Activo">
                     <span
                       style={{
                         display: "inline-block",
@@ -337,7 +337,7 @@ const AdsManager = () => {
                     </span>
                   </td>
 
-                  <td>
+                  <td data-label="Imagen">
                     {a.imagen_url ? (
                       <img
                         src={a.imagen_url}
@@ -355,7 +355,7 @@ const AdsManager = () => {
                     )}
                   </td>
 
-                  <td>
+                  <td data-label="Acciones">
                     <button
                       className="ads-btn-delete"
                       onClick={() => handleDelete(rowId)}
