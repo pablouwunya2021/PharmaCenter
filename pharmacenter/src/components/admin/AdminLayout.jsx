@@ -177,8 +177,18 @@ const AdminLayout = () => {
       </aside>
 
       <main>
-        <div style={{ height:60, background:'rgba(209,179,240,.65)', display:'flex', alignItems:'center', padding:'0 22px', position:'sticky', top:0, zIndex:100 }}>
-          <span style={{ color:'#4a2c75', fontWeight:600 }}>Panel Administrativo</span>
+        <div style={{ 
+          height:60, 
+          background:'linear-gradient(135deg, #b794f6 0%, #9b7fd4 100%)', 
+          display:'flex', 
+          alignItems:'center', 
+          padding:'0 22px', 
+          position:'sticky', 
+          top:0, 
+          zIndex:100,
+          boxShadow:'0 2px 8px rgba(92,60,146,0.15)'
+        }}>
+          <span style={{ color:'#ffffff', fontWeight:700, fontSize:18, letterSpacing:'0.3px' }}>Panel Administrativo</span>
         </div>
         <div style={{ padding:24 }}>
           <Outlet />
