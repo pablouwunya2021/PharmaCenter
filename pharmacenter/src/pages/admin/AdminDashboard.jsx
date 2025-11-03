@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth"; // Ajusta esta ruta según tu estructura
 
@@ -30,6 +30,16 @@ const iconStyleDisabled = {
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, isLoading, isAdmin } = useAuth();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleUserManagementClick = () => {
     if (isAdmin()) {
@@ -65,7 +75,7 @@ const AdminDashboard = () => {
   const userIsAdmin = isAdmin();
 
   return (
-    <section>
+    <section style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
       <h1 
         style={{ 
           color:'#4a2c75', 
@@ -73,7 +83,8 @@ const AdminDashboard = () => {
           marginBottom: 8,
           cursor:'pointer',
           textDecoration:'none',
-          transition:'color 0.2s ease'
+          transition:'color 0.2s ease',
+          fontSize: isMobile ? '1.5rem' : '2rem'
         }}
         onClick={() => navigate('/')}
         onMouseEnter={(e) => e.target.style.color = '#6b21a8'}
@@ -82,16 +93,20 @@ const AdminDashboard = () => {
       >
         Bienvenido al Panel
       </h1>
-      <p style={{ color:'#6b5b95', marginBottom:18 }}>
+      <p style={{ color:'#6b5b95', marginBottom:18, fontSize: isMobile ? '0.9rem' : '1rem' }}>
         Hola {user.nombre}, selecciona una opción para continuar.
         {!userIsAdmin && (
-          <span style={{ fontSize: 14, fontStyle: 'italic' }}>
-            {" "}(Algunas opciones requieren permisos de administrador)
+          <span style={{ fontSize: isMobile ? 12 : 14, fontStyle: 'italic', display: isMobile ? 'block' : 'inline', marginTop: isMobile ? 4 : 0 }}>
+            {isMobile ? '' : ' '}(Algunas opciones requieren permisos de administrador)
           </span>
         )}
       </p>
 
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16 }}>
+      <div style={{ 
+        display:'grid', 
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill,minmax(280px,1fr))', 
+        gap: isMobile ? 12 : 16 
+      }}>
         {/* Inventario - Disponible para todos */}
         <button 
           type="button" 
