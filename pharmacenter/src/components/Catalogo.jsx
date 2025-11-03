@@ -6,6 +6,17 @@ import AddToCartButton from './AddToCartButton';
 function Catalogo() {
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 480);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      setIsSmallMobile(window.innerWidth <= 480);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     fetch('http://localhost:3000/api/medicamentos')
@@ -31,7 +42,9 @@ function Catalogo() {
       <h2>Medicamentos Disponibles</h2>
       {loading && <div className="loading-meds">Cargando medicamentos...</div>}
       <div className="catalog-container">
-        <button className="catalog-btn prev" onClick={() => moveCarousel(-1)}>&#10094;</button>
+        {!isSmallMobile && (
+          <button className="catalog-btn prev" onClick={() => moveCarousel(-1)}>&#10094;</button>
+        )}
         <div className="catalog-carousel" id="medCatalog">
           {medicamentos.map((med, idx) => (
             <div className="card" key={idx}>
@@ -53,7 +66,9 @@ function Catalogo() {
             </div>
           ))}
         </div>
-        <button className="catalog-btn next" onClick={() => moveCarousel(1)}>&#10095;</button>
+        {!isSmallMobile && (
+          <button className="catalog-btn next" onClick={() => moveCarousel(1)}>&#10095;</button>
+        )}
       </div>
     </section>
   );
