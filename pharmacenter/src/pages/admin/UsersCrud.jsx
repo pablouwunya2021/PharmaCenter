@@ -9,6 +9,16 @@ const UsersCrud = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Cargar usuarios (SIN TOKEN)
   const fetchUsers = async () => {
@@ -94,7 +104,7 @@ const UsersCrud = () => {
 
   if (loading) {
     return (
-      <section style={{ padding: 20 }}>
+      <section style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
@@ -103,8 +113,8 @@ const UsersCrud = () => {
           color: '#6b5b95'
         }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 24, marginBottom: 8 }}>⏳</div>
-            <div>Cargando usuarios...</div>
+            <div style={{ fontSize: isMobile ? 20 : 24, marginBottom: 8 }}>⏳</div>
+            <div style={{ fontSize: isMobile ? '0.9rem' : '1rem' }}>Cargando usuarios...</div>
           </div>
         </div>
       </section>
@@ -112,24 +122,24 @@ const UsersCrud = () => {
   }
 
   return (
-    <section style={{ padding: 20 }}>
+    <section style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
       <header style={{ 
         display: 'flex', 
-        alignItems: 'center', 
+        alignItems: isMobile ? 'flex-start' : 'center',
         justifyContent: 'space-between', 
-        marginBottom: 20,
-        flexWrap: 'wrap',
-        gap: 16
+        marginBottom: isMobile ? 16 : 20,
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? 12 : 16
       }}>
-        <div>
-          <h2 style={{ margin: 0, color: '#4a2c75', marginBottom: 8 }}>
+        <div style={{ width: isMobile ? '100%' : 'auto' }}>
+          <h2 style={{ margin: 0, color: '#4a2c75', marginBottom: 8, fontSize: isMobile ? '1.5rem' : '2rem' }}>
             Gestión de Usuarios
           </h2>
-          <p style={{ margin: 0, color: '#6b5b95', fontSize: 14 }}>
+          <p style={{ margin: 0, color: '#6b5b95', fontSize: isMobile ? 13 : 14 }}>
             {users.length} usuario{users.length !== 1 ? 's' : ''} registrado{users.length !== 1 ? 's' : ''} en el sistema
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: isMobile ? 8 : 12, width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
           <button
             type="button"
             onClick={() => navigate('/admin')}
@@ -137,11 +147,13 @@ const UsersCrud = () => {
               background: '#fff',
               color: '#6b46c1', 
               border: '2px solid #6b46c1',
-              padding: '10px 18px',
+              padding: isMobile ? '10px 14px' : '10px 18px',
               borderRadius: 8,
               cursor: 'pointer',
               fontWeight: 600,
-              transition: 'all 0.2s'
+              fontSize: isMobile ? '0.9rem' : '1rem',
+              transition: 'all 0.2s',
+              width: isMobile ? '100%' : 'auto'
             }}
           >
             ← Volver al Panel
@@ -153,11 +165,13 @@ const UsersCrud = () => {
               background: '#6b46c1',
               color: '#fff',
               border: 0,
-              padding: '10px 18px',
+              padding: isMobile ? '10px 14px' : '10px 18px',
               borderRadius: 8,
               cursor: 'pointer',
               fontWeight: 600,
-              transition: 'all 0.2s'
+              fontSize: isMobile ? '0.9rem' : '1rem',
+              transition: 'all 0.2s',
+              width: isMobile ? '100%' : 'auto'
             }}
           >
             + Nuevo Usuario
@@ -167,17 +181,17 @@ const UsersCrud = () => {
 
       {/* Advertencia de seguridad */}
       <div style={{
-        padding: 16,
+        padding: isMobile ? 12 : 16,
         background: '#fee2e2',
         border: '2px solid #ef4444',
-        borderRadius: 12,
-        marginBottom: 20,
+        borderRadius: isMobile ? 8 : 12,
+        marginBottom: isMobile ? 16 : 20,
         color: '#991b1b'
       }}>
-        <div style={{ fontWeight: 700, marginBottom: 4, fontSize: 16 }}>
+        <div style={{ fontWeight: 700, marginBottom: 4, fontSize: isMobile ? 14 : 16 }}>
           ⚠️ ADVERTENCIA DE SEGURIDAD
         </div>
-        <div style={{ fontSize: 14 }}>
+        <div style={{ fontSize: isMobile ? 12 : 14 }}>
           Este endpoint NO tiene protección JWT. Cualquiera puede acceder y eliminar usuarios. 
           <strong> Solo usar en desarrollo. DEBE ser eliminado en producción.</strong>
         </div>
@@ -217,109 +231,201 @@ const UsersCrud = () => {
       {!error && users.length > 0 && (
         <div style={{ 
           background: '#fff',
-          borderRadius: 12,
+          borderRadius: isMobile ? 8 : 12,
           boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
           overflow: 'hidden'
         }}>
-          {/* Tabla de usuarios */}
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ 
-              width: '100%',
-              borderCollapse: 'collapse'
-            }}>
-              <thead>
-                <tr style={{ 
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: '#fff'
-                }}>
-                  <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 600 }}>ID</th>
-                  <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 600 }}>Nombre</th>
-                  <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 600 }}>Correo</th>
-                  <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 600 }}>Rol</th>
-                  <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 600 }}>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user, index) => {
-                  const isAdmin = user.rol === 'admin';
-                  return (
-                    <tr 
-                      key={user.idusuario}
-                      style={{ 
-                        borderBottom: '1px solid #e6e6f2',
-                        background: index % 2 === 0 ? '#fff' : '#fafafa',
-                        transition: 'background 0.2s'
-                      }}
-                    >
-                      <td style={{ padding: '16px 20px', color: '#6b5b95', fontWeight: 600 }}>
-                        #{user.idusuario}
-                      </td>
-                      <td style={{ padding: '16px 20px', color: '#3b2a63', fontWeight: 500 }}>
-                        {user.nombre}
-                      </td>
-                      <td style={{ padding: '16px 20px', color: '#6b5b95' }}>
-                        {user.correo}
-                      </td>
-                      <td style={{ padding: '16px 20px' }}>
-                        {getRoleBadge(user.rol)}
-                      </td>
-                      <td style={{ padding: '16px 20px', textAlign: 'center' }}>
-                        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                          <button
-                            onClick={() => navigate(`/admin/users/edit/${user.idusuario}`)}
-                            disabled={deletingId === user.idusuario}
-                            style={{
-                              padding: '8px 16px',
-                              borderRadius: 8,
-                              border: '1px solid #e6e6f2',
-                              background: '#fff',
-                              color: '#6b46c1',
-                              cursor: 'pointer',
-                              fontWeight: 500,
-                              transition: 'all 0.2s',
-                              opacity: deletingId === user.idusuario ? 0.5 : 1
-                            }}
-                          >
-                            ✏️ Editar
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user.idusuario, user.nombre, user.rol)}
-                            disabled={deletingId === user.idusuario || isAdmin}
-                            style={{
-                              padding: '8px 16px',
-                              borderRadius: 8,
-                              border: '1px solid #ffe6e6',
-                              background: deletingId === user.idusuario ? '#fcc' : '#fff',
-                              color: isAdmin ? '#9ca3af' : '#c53030',
-                              cursor: (deletingId === user.idusuario || isAdmin) ? 'not-allowed' : 'pointer',
-                              fontWeight: 500,
-                              transition: 'all 0.2s',
-                              opacity: (deletingId === user.idusuario || isAdmin) ? 0.5 : 1
-                            }}
-                            title={isAdmin ? 'No se pueden eliminar administradores' : 'Eliminar usuario'}
-                          >
-                            {deletingId === user.idusuario ? '⏳ Eliminando...' : 
-                             isAdmin ? '🔒 Protegido' : '🗑️ Eliminar'}
-                          </button>
+          {/* Vista de Tabla para Desktop */}
+          {!isMobile && (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ 
+                width: '100%',
+                borderCollapse: 'collapse'
+              }}>
+                <thead>
+                  <tr style={{ 
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: '#fff'
+                  }}>
+                    <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 600 }}>ID</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 600 }}>Nombre</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 600 }}>Correo</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 600 }}>Rol</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 600 }}>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user, index) => {
+                    const isAdmin = user.rol === 'admin';
+                    return (
+                      <tr 
+                        key={user.idusuario}
+                        style={{ 
+                          borderBottom: '1px solid #e6e6f2',
+                          background: index % 2 === 0 ? '#fff' : '#fafafa',
+                          transition: 'background 0.2s'
+                        }}
+                      >
+                        <td style={{ padding: '16px 20px', color: '#6b5b95', fontWeight: 600 }}>
+                          #{user.idusuario}
+                        </td>
+                        <td style={{ padding: '16px 20px', color: '#3b2a63', fontWeight: 500 }}>
+                          {user.nombre}
+                        </td>
+                        <td style={{ padding: '16px 20px', color: '#6b5b95' }}>
+                          {user.correo}
+                        </td>
+                        <td style={{ padding: '16px 20px' }}>
+                          {getRoleBadge(user.rol)}
+                        </td>
+                        <td style={{ padding: '16px 20px', textAlign: 'center' }}>
+                          <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                            <button
+                              onClick={() => navigate(`/admin/users/edit/${user.idusuario}`)}
+                              disabled={deletingId === user.idusuario}
+                              style={{
+                                padding: '8px 16px',
+                                borderRadius: 8,
+                                border: '1px solid #e6e6f2',
+                                background: '#fff',
+                                color: '#6b46c1',
+                                cursor: 'pointer',
+                                fontWeight: 500,
+                                transition: 'all 0.2s',
+                                opacity: deletingId === user.idusuario ? 0.5 : 1
+                              }}
+                            >
+                              ✏️ Editar
+                            </button>
+                            <button
+                              onClick={() => handleDelete(user.idusuario, user.nombre, user.rol)}
+                              disabled={deletingId === user.idusuario || isAdmin}
+                              style={{
+                                padding: '8px 16px',
+                                borderRadius: 8,
+                                border: '1px solid #ffe6e6',
+                                background: deletingId === user.idusuario ? '#fcc' : '#fff',
+                                color: isAdmin ? '#9ca3af' : '#c53030',
+                                cursor: (deletingId === user.idusuario || isAdmin) ? 'not-allowed' : 'pointer',
+                                fontWeight: 500,
+                                transition: 'all 0.2s',
+                                opacity: (deletingId === user.idusuario || isAdmin) ? 0.5 : 1
+                              }}
+                              title={isAdmin ? 'No se pueden eliminar administradores' : 'Eliminar usuario'}
+                            >
+                              {deletingId === user.idusuario ? '⏳ Eliminando...' : 
+                               isAdmin ? '🔒 Protegido' : '🗑️ Eliminar'}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Vista de Tarjetas para Móvil */}
+          {isMobile && (
+            <div style={{ padding: '12px' }}>
+              {users.map((user) => {
+                const isAdmin = user.rol === 'admin';
+                return (
+                  <div 
+                    key={user.idusuario}
+                    style={{
+                      background: '#fff',
+                      border: '1px solid #e6e6f2',
+                      borderRadius: 8,
+                      padding: 12,
+                      marginBottom: 12,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 12 }}>
+                      <div>
+                        <div style={{ color: '#3b2a63', fontWeight: 600, fontSize: '1rem', marginBottom: 4 }}>
+                          {user.nombre}
                         </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        <div style={{ color: '#6b5b95', fontSize: '0.85rem' }}>
+                          {user.correo}
+                        </div>
+                      </div>
+                      {getRoleBadge(user.rol)}
+                    </div>
+                    
+                    <div style={{ 
+                      padding: '8px 0',
+                      borderTop: '1px solid #f0f0f0',
+                      borderBottom: '1px solid #f0f0f0',
+                      marginBottom: 12,
+                      color: '#6b5b95',
+                      fontSize: '0.85rem'
+                    }}>
+                      ID: <strong>#{user.idusuario}</strong>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        onClick={() => navigate(`/admin/users/edit/${user.idusuario}`)}
+                        disabled={deletingId === user.idusuario}
+                        style={{
+                          flex: 1,
+                          padding: '10px',
+                          borderRadius: 6,
+                          border: '1px solid #e6e6f2',
+                          background: '#fff',
+                          color: '#6b46c1',
+                          cursor: 'pointer',
+                          fontWeight: 500,
+                          fontSize: '0.9rem',
+                          transition: 'all 0.2s',
+                          opacity: deletingId === user.idusuario ? 0.5 : 1
+                        }}
+                      >
+                        ✏️ Editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.idusuario, user.nombre, user.rol)}
+                        disabled={deletingId === user.idusuario || isAdmin}
+                        style={{
+                          flex: 1,
+                          padding: '10px',
+                          borderRadius: 6,
+                          border: '1px solid #ffe6e6',
+                          background: deletingId === user.idusuario ? '#fcc' : '#fff',
+                          color: isAdmin ? '#9ca3af' : '#c53030',
+                          cursor: (deletingId === user.idusuario || isAdmin) ? 'not-allowed' : 'pointer',
+                          fontWeight: 500,
+                          fontSize: '0.9rem',
+                          transition: 'all 0.2s',
+                          opacity: (deletingId === user.idusuario || isAdmin) ? 0.5 : 1
+                        }}
+                        title={isAdmin ? 'No se pueden eliminar administradores' : 'Eliminar usuario'}
+                      >
+                        {deletingId === user.idusuario ? '⏳...' : 
+                         isAdmin ? '🔒' : '🗑️'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Footer con información */}
           <div style={{
-            padding: 16,
+            padding: isMobile ? 12 : 16,
             background: '#fafafa',
             borderTop: '1px solid #e6e6f2',
-            fontSize: 14,
+            fontSize: isMobile ? 12 : 14,
             color: '#6b5b95',
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: isMobile ? 'flex-start' : 'center',
+            gap: isMobile ? 8 : 0
           }}>
             <div>
               Total de usuarios: <strong>{users.length}</strong>
@@ -333,18 +439,18 @@ const UsersCrud = () => {
 
       {/* Información importante */}
       <div style={{
-        marginTop: 20,
-        padding: 16,
+        marginTop: isMobile ? 16 : 20,
+        padding: isMobile ? 12 : 16,
         background: '#fef3cd',
         border: '1px solid #fbbf24',
-        borderRadius: 12,
-        fontSize: 14,
+        borderRadius: isMobile ? 8 : 12,
+        fontSize: isMobile ? 12 : 14,
         color: '#92400e'
       }}>
         <div style={{ fontWeight: 600, marginBottom: 4 }}>
           ℹ️ Información Importante
         </div>
-        <ul style={{ margin: 0, paddingLeft: 20 }}>
+        <ul style={{ margin: 0, paddingLeft: isMobile ? 16 : 20, fontSize: isMobile ? 11 : 14 }}>
           <li>Los usuarios administradores NO pueden ser eliminados</li>
           <li>La eliminación de usuarios es permanente y no se puede deshacer</li>
           <li>Los usuarios regulares pueden ser eliminados sin restricciones</li>
