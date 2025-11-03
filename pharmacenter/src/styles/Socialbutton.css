@@ -1,0 +1,64 @@
+/* Estilos para el botón de Redes Sociales - NO FLOTANTE */
+
+.boton-centro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 2rem 0;
+  margin-top: 3rem;
+  /* NO usar position: fixed o position: sticky */
+  position: relative; /* Esto asegura que NO sea flotante */
+}
+
+.boton-personalizado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  /* NO usar position: fixed */
+  position: relative;
+}
+
+.boton-personalizado:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.boton-personalizado:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .boton-centro {
+    padding: 1.5rem 0;
+    margin-top: 2rem;
+  }
+
+  .boton-personalizado {
+    padding: 12px 28px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .boton-centro {
+    padding: 1rem 0;
+    margin-top: 1.5rem;
+  }
+
+  .boton-personalizado {
+    padding: 10px 24px;
+    font-size: 14px;
+  }
+}

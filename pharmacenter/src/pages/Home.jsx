@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import Carousel from '../components/Carousel'
 import Catalogo from '../components/Catalogo'
 import Publicidad from '../components/Publicidad'
+import '../styles/Socialbutton.css'; 
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true)
