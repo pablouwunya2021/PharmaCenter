@@ -3,6 +3,7 @@ const express = require('express');
 const db = require('./models/db');
 const cors = require('cors');
 const { transporter, sendLowStockAlert } = require('./utils/email');
+const { sendPurchaseNotification } = require('./utils/emailPurchase');
 const { scheduleInventoryChecks } = require('./utils/monitor');
 const app = express();
 const bcrypt = require("bcryptjs");
@@ -1009,5 +1010,23 @@ app.get('/api/profile', verifyToken, async (req, res) => {
 
 // Health Check
 app.get('/ping', (req, res) => res.send('pong'));
+
+//=================== Notificación de Compra =========================
+
+// Ruta para enviar notificación de compra
+app.post('/api/enviar-notificacion-compra', async (req, res) => {
+  try {
+    const resultado = await sendPurchaseNotification(req.body);
+    
+    if (resultado) {
+      res.json({ success: true, message: 'Correo enviado correctamente' });
+    } else {
+      res.status(500).json({ success: false, message: 'Error al enviar correo' });
+    }
+  } catch (error) {
+    console.error('Error en ruta de notificación:', error);
+    res.status(500).json({ success: false, message: 'Error del servidor' });
+  }
+});
 
 module.exports = app;
