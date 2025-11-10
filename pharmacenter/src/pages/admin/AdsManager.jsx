@@ -82,82 +82,91 @@ const AdsManager = () => {
 
   // ================== CREAR ==================
   const handleAdd = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!AUTO_FILL_MISSING) {
-      if (!form.titulo.trim()) {
-        alert("Debe ingresar un título");
-        return;
-      }
-      if (!form.fecha_inicio) {
-        alert("Debe ingresar una fecha de inicio");
-        return;
-      }
-      if (!form.fecha_fin) {
-        alert("Debe ingresar una fecha de fin");
-        return;
-      }
+  // 🔸 Confirmación antes de guardar
+  const confirmed = window.confirm(
+    "¿Deseas guardar esta publicidad?\nVerifica que los datos sean correctos antes de continuar."
+  );
+  if (!confirmed) {
+    alert("Operación cancelada ❌");
+    return;
+  }
+
+  if (!AUTO_FILL_MISSING) {
+    if (!form.titulo.trim()) {
+      alert("Debe ingresar un título");
+      return;
     }
-
-    const titulo = AUTO_FILL_MISSING
-      ? form.titulo?.trim() || "Sin título"
-      : form.titulo.trim();
-
-    let fecha_inicio = form.fecha_inicio;
-    let fecha_fin = form.fecha_fin;
-
-    if (AUTO_FILL_MISSING) {
-      if (!fecha_inicio) fecha_inicio = todayStr();
-      if (!fecha_fin) fecha_fin = addDays(fecha_inicio, 30);
+    if (!form.fecha_inicio) {
+      alert("Debe ingresar una fecha de inicio");
+      return;
     }
-
-    const payload = {
-      titulo,
-      descripcion: AUTO_FILL_MISSING ? form.descripcion ?? " " : form.descripcion,
-      tipo_publicidad: form.tipo_publicidad || "banner",
-      imagen_url: AUTO_FILL_MISSING ? form.imagen_url ?? " " : form.imagen_url,
-      fecha_inicio,
-      fecha_fin,
-      activo: Boolean(form.activo),
-      url_enlace: AUTO_FILL_MISSING ? form.url_enlace ?? " " : form.url_enlace,
-      codigo_promocional: AUTO_FILL_MISSING
-        ? form.codigo_promocional ?? " "
-        : form.codigo_promocional,
-      descuento_porcentaje:
-        form.descuento_porcentaje === "" || form.descuento_porcentaje === undefined
-          ? null
-          : Number(form.descuento_porcentaje),
-    };
-
-    try {
-      const res = await fetch(`${API}/api/publicidad`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al registrar publicidad");
-
-      alert("Publicidad creada correctamente ✅");
-      setForm({
-        titulo: "",
-        descripcion: "",
-        tipo_publicidad: "banner",
-        fecha_inicio: "",
-        fecha_fin: "",
-        descuento_porcentaje: "",
-        codigo_promocional: "",
-        imagen_url: "",
-        url_enlace: "",
-        activo: true,
-      });
-      fetchAds();
-    } catch (err) {
-      console.error("Error al guardar publicidad:", err);
-      alert(`Error al guardar publicidad: ${err.message || "Servidor no disponible"}`);
+    if (!form.fecha_fin) {
+      alert("Debe ingresar una fecha de fin");
+      return;
     }
+  }
+
+  const titulo = AUTO_FILL_MISSING
+    ? form.titulo?.trim() || "Sin título"
+    : form.titulo.trim();
+
+  let fecha_inicio = form.fecha_inicio;
+  let fecha_fin = form.fecha_fin;
+
+  if (AUTO_FILL_MISSING) {
+    if (!fecha_inicio) fecha_inicio = todayStr();
+    if (!fecha_fin) fecha_fin = addDays(fecha_inicio, 30);
+  }
+
+  const payload = {
+    titulo,
+    descripcion: AUTO_FILL_MISSING ? form.descripcion ?? " " : form.descripcion,
+    tipo_publicidad: form.tipo_publicidad || "banner",
+    imagen_url: AUTO_FILL_MISSING ? form.imagen_url ?? " " : form.imagen_url,
+    fecha_inicio,
+    fecha_fin,
+    activo: Boolean(form.activo),
+    url_enlace: AUTO_FILL_MISSING ? form.url_enlace ?? " " : form.url_enlace,
+    codigo_promocional: AUTO_FILL_MISSING
+      ? form.codigo_promocional ?? " "
+      : form.codigo_promocional,
+    descuento_porcentaje:
+      form.descuento_porcentaje === "" || form.descuento_porcentaje === undefined
+        ? null
+        : Number(form.descuento_porcentaje),
   };
+
+  try {
+    const res = await fetch(`${API}/api/publicidad`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Error al registrar publicidad");
+
+    alert("Publicidad creada correctamente ✅");
+    setForm({
+      titulo: "",
+      descripcion: "",
+      tipo_publicidad: "banner",
+      fecha_inicio: "",
+      fecha_fin: "",
+      descuento_porcentaje: "",
+      codigo_promocional: "",
+      imagen_url: "",
+      url_enlace: "",
+      activo: true,
+    });
+    fetchAds();
+  } catch (err) {
+    console.error("Error al guardar publicidad:", err);
+    alert(`Error al guardar publicidad: ${err.message || "Servidor no disponible"}`);
+  }
+};
 
   // ================== ELIMINAR ==================
   const handleDelete = async (id) => {
