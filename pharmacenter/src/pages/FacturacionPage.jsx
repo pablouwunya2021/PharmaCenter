@@ -16,7 +16,7 @@ function FacturacionPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Detectar cambios en el tamaño de la ventana
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -30,7 +30,7 @@ function FacturacionPage() {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     
-    // Limpiar error del campo cuando el usuario empiece a escribir
+
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
     }
@@ -74,7 +74,7 @@ function FacturacionPage() {
 
     setIsLoading(true);
 
-    // Simulación de guardado (puedes conectar con tu API aquí)
+
     setTimeout(() => {
       console.log("Datos de facturación:", formData);
       localStorage.setItem("facturaData", JSON.stringify(formData));
@@ -82,8 +82,7 @@ function FacturacionPage() {
       alert("✅ Datos de facturación guardados correctamente");
       setIsLoading(false);
       
-      // Aquí puedes redirigir a la página de confirmación o resumen
-      // navigate("/confirmacion");
+
     }, 1000);
   };
 
