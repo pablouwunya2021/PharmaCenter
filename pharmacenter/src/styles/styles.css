@@ -888,3 +888,21 @@ body {
 .tile-body p{ margin:0; color:var(--muted); font-size:14px; }
 .tile-arrow{ margin-left:auto; color:var(--primary); font-weight:900; font-size:20px; }
 
+.btn-comprar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #5b2d90; 
+  color: white;
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.btn-comprar:hover {
+  background-color: #6e37aa;
+}
+
+
