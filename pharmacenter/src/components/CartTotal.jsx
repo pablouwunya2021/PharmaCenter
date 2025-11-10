@@ -15,8 +15,8 @@ const CartTotal = ({ total }) => {
     gap: 12,
     marginTop: 12,
     flexWrap: 'wrap',
-    justifyContent: 'center',   // 👈 centra horizontalmente
-    alignItems: 'center'         // 👈 opcional: alinea vertical
+    justifyContent: 'center',  
+    alignItems: 'center'         
   }}
 >
   <ClearCartButton />
