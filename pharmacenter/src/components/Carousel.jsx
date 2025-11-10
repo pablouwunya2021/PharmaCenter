@@ -22,18 +22,34 @@ function Carousel() {
     setCurrentIndex((prev) => (prev + direction + images.length) % images.length)
   }
 
+  // Autoplay
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length)
+    }, 4000) // 4 segundos
+
+    return () => clearInterval(interval) // limpiar al desmontar
+  }, [])
+
   return (
     <section className="carousel">
       <div className="carousel-inner">
         {images.map((img, idx) => (
-          <div key={idx} className={`carousel-item ${idx === currentIndex ? 'active' : ''}`}>
+          <div
+            key={idx}
+            className={`carousel-item ${idx === currentIndex ? 'active' : ''}`}
+          >
             <img src={img.src} alt={img.caption} />
             <div className="caption">{img.caption}</div>
           </div>
         ))}
       </div>
-      <button className="carousel-btn prev" onClick={() => moveCarousel(-1)}>&#10094;</button>
-      <button className="carousel-btn next" onClick={() => moveCarousel(1)}>&#10095;</button>
+      <button className="carousel-btn prev" onClick={() => moveCarousel(-1)}>
+        &#10094;
+      </button>
+      <button className="carousel-btn next" onClick={() => moveCarousel(1)}>
+        &#10095;
+      </button>
     </section>
   )
 }
