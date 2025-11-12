@@ -3,6 +3,9 @@ node_modules/
 
 # Environment files
 .env
+.env.local
+.env.*.local
+.env.production.local
 
 # Local database files
 postgres_data/
