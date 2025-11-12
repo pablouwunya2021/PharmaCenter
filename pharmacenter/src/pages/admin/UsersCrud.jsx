@@ -179,24 +179,6 @@ const UsersCrud = () => {
         </div>
       </header>
 
-      {/* Advertencia de seguridad */}
-      <div style={{
-        padding: isMobile ? 12 : 16,
-        background: '#fee2e2',
-        border: '2px solid #ef4444',
-        borderRadius: isMobile ? 8 : 12,
-        marginBottom: isMobile ? 16 : 20,
-        color: '#991b1b'
-      }}>
-        <div style={{ fontWeight: 700, marginBottom: 4, fontSize: isMobile ? 14 : 16 }}>
-          ⚠️ ADVERTENCIA DE SEGURIDAD
-        </div>
-        <div style={{ fontSize: isMobile ? 12 : 14 }}>
-          Este endpoint NO tiene protección JWT. Cualquiera puede acceder y eliminar usuarios. 
-          <strong> Solo usar en desarrollo. DEBE ser eliminado en producción.</strong>
-        </div>
-      </div>
-
       {error && (
         <div style={{
           padding: 16,
