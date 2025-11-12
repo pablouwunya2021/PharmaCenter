@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 const IconHome = ({ color = '#7c56c6' }) => (
@@ -14,10 +14,6 @@ const IconBox = ({ color = '#7c56c6' }) => (
     <path d="M7 12h10M7 8h10M7 16h10" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
-const handleGoToHome = () => {
-  const navigate = useNavigate();
-  navigate('../pages/Home.jsx'); 
-  };
 
 const IconInventory = ({ color = '#7c56c6' }) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -34,14 +30,51 @@ const IconLogout = ({ color = '#fff' }) => (
   </svg>
 );
 
+const IconMenu = ({ color = '#fff' }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 12h18M3 6h18M3 18h18" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const IconClose = ({ color = '#fff' }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 6L6 18M6 6l12 12" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const AdminLayout = () => {
   const [logoutHover, setLogoutHover] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      if (window.innerWidth > 768) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleGoToHome = () => {
+    navigate('/');
+    setMenuOpen(false);
+  };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/login', { replace: true });
+  };
+
+  const handleNavClick = () => {
+    if (isMobile) {
+      setMenuOpen(false);
+    }
   };
 
   const linkStyle = ({ isActive }) => ({
@@ -67,31 +100,60 @@ const AdminLayout = () => {
     flexDirection: 'column',
     justifyContent: 'space-between',
     minHeight: '100vh',
+    position: isMobile ? 'fixed' : 'static',
+    top: 0,
+    left: isMobile ? (menuOpen ? 0 : '-280px') : 0,
+    width: isMobile ? '280px' : 'auto',
+    zIndex: 1000,
+    transition: 'left 0.3s ease-in-out',
+    overflowY: 'auto',
   };
 
   return (
-    <div style={{ display:'grid', gridTemplateColumns:'260px 1fr', minHeight:'100vh', background:'#f4ebfa', fontFamily:'Montserrat, sans-serif' }}>
+    <>
+      {/* Overlay para cerrar menú en móvil */}
+      {isMobile && menuOpen && (
+        <div 
+          onClick={() => setMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 999,
+          }}
+        />
+      )}
+
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: isMobile ? '1fr' : '260px 1fr', 
+        minHeight: '100vh', 
+        background: '#f4ebfa', 
+        fontFamily: 'Montserrat, sans-serif' 
+      }}>
       <aside style={asideStyle}>
         <div>
-           <div 
-          style={{ 
-            fontSize: 20, 
-            fontWeight: 700, 
-            marginBottom: 18,
-            cursor: 'pointer', // Indica que es clickable
-            transition: 'opacity 0.2s ease', // Transición suave
+          <div 
+            style={{ 
+              fontSize: 20, 
+              fontWeight: 700, 
+              marginBottom: 18,
+              cursor: 'pointer',
+              transition: 'opacity 0.2s ease',
             }}  
             onClick={handleGoToHome}
-            onMouseEnter={(e) => e.target.style.opacity = '0.8'} // Efecto hover
+            onMouseEnter={(e) => e.target.style.opacity = '0.8'}
             onMouseLeave={(e) => e.target.style.opacity = '1'}
           >
             Admin · Bethesda
           </div>
-          
 
           <nav style={{ display:'flex', flexDirection:'column', gap:10 }}>
             <button
-              onClick={() => navigate('/')}
+              onClick={handleGoToHome}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -127,7 +189,7 @@ const AdminLayout = () => {
               <div>Inicio</div>
             </button>
 
-            <NavLink to="/admin" end style={linkStyle}>
+            <NavLink to="/admin" end style={linkStyle} onClick={handleNavClick}>
               <div style={{ display:'flex', alignItems:'center', gap:12 }}>
                 <div style={{ width:40, height:40, borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.18)' }}>
                   <IconBox color="#6e49b3" />
@@ -136,7 +198,7 @@ const AdminLayout = () => {
               </div>
             </NavLink>
 
-            <NavLink to="/admin/inventory" style={linkStyle}>
+            <NavLink to="/admin/inventory" style={linkStyle} onClick={handleNavClick}>
               <div style={{ display:'flex', alignItems:'center', gap:12 }}>
                 <div style={{ width:40, height:40, borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.12)' }}>
                   <IconInventory color="#6e49b3" />
@@ -178,23 +240,46 @@ const AdminLayout = () => {
 
       <main>
         <div style={{ 
-          height:60, 
-          background:'linear-gradient(135deg, #b794f6 0%, #9b7fd4 100%)', 
-          display:'flex', 
-          alignItems:'center', 
-          padding:'0 22px', 
-          position:'sticky', 
-          top:0, 
-          zIndex:100,
-          boxShadow:'0 2px 8px rgba(92,60,146,0.15)'
+          height: 60, 
+          background: 'linear-gradient(135deg, #b794f6 0%, #9b7fd4 100%)', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          padding: '0 22px', 
+          position: 'sticky', 
+          top: 0, 
+          zIndex: 100,
+          boxShadow: '0 2px 8px rgba(92,60,146,0.15)'
         }}>
-          <span style={{ color:'#ffffff', fontWeight:700, fontSize:18, letterSpacing:'0.3px' }}>Panel Administrativo</span>
+          {isMobile && (
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#fff',
+                cursor: 'pointer',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                marginRight: '12px'
+              }}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <IconClose /> : <IconMenu />}
+            </button>
+          )}
+          <span style={{ color: '#ffffff', fontWeight: 700, fontSize: 18, letterSpacing: '0.3px' }}>
+            Panel Administrativo
+          </span>
+          {isMobile && <div style={{ width: 40 }} />} {/* Espaciador para centrar el título */}
         </div>
-        <div style={{ padding:24 }}>
+        <div style={{ padding: isMobile ? 16 : 24 }}>
           <Outlet />
         </div>
       </main>
     </div>
+    </>
   );
 };
 
