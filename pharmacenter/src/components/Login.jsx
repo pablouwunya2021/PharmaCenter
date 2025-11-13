@@ -110,24 +110,6 @@ const Login = () => {
           </p>
         </div>
 
-        {/* (Opcional) Credenciales demo */}
-        <div 
-          style={{
-            backgroundColor: '#e8f5e8',
-            border: '1px solid #4caf50',
-            borderRadius: '8px',
-            padding: '15px',
-            marginBottom: '20px',
-            fontSize: '14px'
-          }}
-        >
-          <strong style={{ color: '#2e7d32' }}>Credenciales de prueba:</strong>
-          <br />
-          <strong>Admin:</strong> admin@pharmacenter.com / admin123
-          <br />
-          <strong>Usuario:</strong> ana.torres@email.com / ana123
-        </div>
-
         {/* Errores generales */}
         {errors.general && (
           <div 

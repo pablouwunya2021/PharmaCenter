@@ -169,35 +169,6 @@ const AdminDashboard = () => {
           </span>
         </button>
 
-        {/* Reportes - Solo para administradores */}
-        {userIsAdmin && (
-          <button 
-            type="button" 
-            onClick={() => navigate('/admin/reports')} 
-            style={cardStyle}
-          >
-            <span style={iconStyle}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
-              </svg>
-            </span>
-            <div>
-              <div style={{ fontWeight:800, color:'#3b2a63' }}>
-                Reportes
-                <span style={{ 
-                  fontSize: 12, 
-                  fontWeight: 400, 
-                  color: '#10b981',
-                  marginLeft: 8
-                }}>
-                  Admin
-                </span>
-              </div>
-              <div style={{ color:'#6b5b95', fontSize:14 }}>Estadísticas y reportes del sistema</div>
-            </div>
-            <span style={{ marginLeft:'auto', color:'#5c3c92', fontWeight:900, fontSize:20 }}>→</span>
-          </button>
-        )}
 
         {/* Publicidad - Disponible para todos (cámbialo a userIsAdmin && (...) si quieres restringir) */}
         <button 
