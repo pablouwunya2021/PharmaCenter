@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 function FacturacionPage() {
   const navigate = useNavigate();
+  const { cartItems, total } = useCart();
   const [formData, setFormData] = useState({
     nombre: "",
     direccion: "",
