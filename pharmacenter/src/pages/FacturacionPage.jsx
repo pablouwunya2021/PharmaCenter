@@ -76,7 +76,7 @@ function FacturacionPage() {
 
     // Validar que haya productos en el carrito
     if (cartItems.length === 0) {
-      alert("❌ No hay productos en el carrito");
+      alert("No hay productos en el carrito");
       return;
     }
 
@@ -103,6 +103,29 @@ function FacturacionPage() {
         ? 'http://localhost:3000' 
         : 'https://pharmacenter.store';
 
+      // Enviar correo
+      const response = await fetch(`${API_URL}/api/enviar-notificacion-compra`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosCompra)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log("Datos de facturación:", formData);
+        localStorage.setItem("facturaData", JSON.stringify(formData));
+        alert("Datos guardados y correo enviado correctamente");
+      } else {
+        alert("Datos guardados pero el correo no se pudo enviar");
+        localStorage.setItem("facturaData", JSON.stringify(formData));
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert("Error al procesar. Verifica tu conexión con el servidor");
+    } finally {
+      setIsLoading(false);
     }
   };
 
