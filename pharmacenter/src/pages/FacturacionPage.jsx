@@ -67,25 +67,43 @@ function FacturacionPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
       return;
     }
 
+    // Validar que haya productos en el carrito
+    if (cartItems.length === 0) {
+      alert("❌ No hay productos en el carrito");
+      return;
+    }
+
     setIsLoading(true);
 
+    try {
+      // Preparar datos para el correo
+      const datosCompra = {
+        nombre: formData.nombre,
+        correo: formData.email,
+        telefono: formData.telefono,
+        direccion: formData.direccion,
+        nit: formData.nit || 'N/A',
+        ciudad: formData.ciudad || 'N/A',
+        medicamentos: cartItems.map(item => ({
+          nombre: item.nombre,
+          cantidad: item.cantidad
+        })),
+        total: total.toFixed(2)
+      };
 
-    setTimeout(() => {
-      console.log("Datos de facturación:", formData);
-      localStorage.setItem("facturaData", JSON.stringify(formData));
-      
-      alert("✅ Datos de facturación guardados correctamente");
-      setIsLoading(false);
-      
+      // Detectar entorno (local o producción)
+      const API_URL = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3000' 
+        : 'https://pharmacenter.store';
 
-    }, 1000);
+    }
   };
 
   const styles = {
