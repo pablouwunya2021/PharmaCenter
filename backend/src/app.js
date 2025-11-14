@@ -1016,17 +1016,46 @@ app.get('/ping', (req, res) => res.send('pong'));
 // Ruta para enviar notificación de compra
 app.post('/api/enviar-notificacion-compra', async (req, res) => {
   try {
+    console.log('📥 Solicitud recibida');
+    console.log('📦 Datos:', req.body);
+
+    // Validar datos
+    const { correo, medicamentos, nombre, telefono, direccion } = req.body;
+    
+    if (!correo || !medicamentos || !nombre || !telefono || !direccion) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Faltan campos requeridos'
+      });
+    }
+
+    if (!Array.isArray(medicamentos) || medicamentos.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'El carrito está vacío' 
+      });
+    }
+
+    // Enviar correos
     const resultado = await sendPurchaseNotification(req.body);
     
     if (resultado) {
-      res.json({ success: true, message: 'Correo enviado correctamente' });
+      console.log('✅ Proceso completado');
+      res.json({ 
+        success: true, 
+        message: 'Correos enviados correctamente' 
+      });
     } else {
-      res.status(500).json({ success: false, message: 'Error al enviar correo' });
+      throw new Error('No se pudo completar el envío');
     }
+
   } catch (error) {
-    console.error('Error en ruta de notificación:', error);
-    res.status(500).json({ success: false, message: 'Error del servidor' });
+    console.error('❌ Error:', error.message);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error del servidor',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
-
 module.exports = app;
