@@ -4,7 +4,7 @@ import { useCart } from "../context/CartContext";
 
 function FacturacionPage() {
   const navigate = useNavigate();
-  const { cartItems, total } = useCart();
+  const { cartItems, total, clearCart } = useCart();
   const [formData, setFormData] = useState({
     nombre: "",
     direccion: "",
@@ -18,7 +18,6 @@ function FacturacionPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -28,11 +27,18 @@ function FacturacionPage() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Validar que haya productos en el carrito al cargar
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      alert("No hay productos en el carrito");
+      navigate("/");
+    }
+  }, [cartItems, navigate]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     
-
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
     }
@@ -74,7 +80,6 @@ function FacturacionPage() {
       return;
     }
 
-    // Validar que haya productos en el carrito
     if (cartItems.length === 0) {
       alert("No hay productos en el carrito");
       return;
@@ -89,41 +94,68 @@ function FacturacionPage() {
         correo: formData.email,
         telefono: formData.telefono,
         direccion: formData.direccion,
-        nit: formData.nit || 'N/A',
-        ciudad: formData.ciudad || 'N/A',
+        nit: formData.nit || 'C/F',
+        ciudad: formData.ciudad || 'Guatemala',
         medicamentos: cartItems.map(item => ({
           nombre: item.nombre,
-          cantidad: item.cantidad
+          cantidad: item.cantidad,
+          precio: item.precio || 0
         })),
         total: total.toFixed(2)
       };
 
-      // Detectar entorno (local o producción)
+      // Detectar entorno
       const API_URL = window.location.hostname === 'localhost' 
         ? 'http://localhost:3000' 
         : 'https://pharmacenter.store';
 
+      console.log('📤 Enviando datos a:', `${API_URL}/api/enviar-notificacion-compra`);
+      console.log('📦 Datos:', datosCompra);
+
       // Enviar correo
       const response = await fetch(`${API_URL}/api/enviar-notificacion-compra`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(datosCompra)
       });
 
       const result = await response.json();
+      console.log('📥 Respuesta del servidor:', result);
 
-      if (result.success) {
-        console.log("Datos de facturación:", formData);
+      if (response.ok && result.success) {
+        // Guardar datos en localStorage
         localStorage.setItem("facturaData", JSON.stringify(formData));
-        alert("Datos guardados y correo enviado correctamente");
+        localStorage.setItem("ultimaCompra", JSON.stringify(datosCompra));
+        
+        // Mostrar mensaje de éxito
+        alert("✅ ¡Compra realizada con éxito!\n\nRecibirás un correo de confirmación en breve.\nNos pondremos en contacto contigo para coordinar la entrega.");
+        
+        // Limpiar carrito (si tienes esta función en tu contexto)
+        if (clearCart) {
+          clearCart();
+        }
+        
+        // Redirigir al home o página de confirmación
+        navigate("/");
       } else {
-        alert("Datos guardados pero el correo no se pudo enviar");
-        localStorage.setItem("facturaData", JSON.stringify(formData));
+        throw new Error(result.message || 'Error al procesar la compra');
       }
 
     } catch (error) {
-      console.error('Error:', error);
-      alert("Error al procesar. Verifica tu conexión con el servidor");
+      console.error('❌ Error:', error);
+      
+      // Guardar datos localmente como respaldo
+      localStorage.setItem("facturaData", JSON.stringify(formData));
+      
+      alert(
+        "⚠️ Hubo un problema al enviar el correo.\n\n" +
+        "Tus datos han sido guardados.\n" +
+        "Por favor contacta al WhatsApp: [TU_NUMERO]\n\n" +
+        "Error: " + error.message
+      );
     } finally {
       setIsLoading(false);
     }
@@ -207,11 +239,6 @@ function FacturacionPage() {
     inputError: {
       borderColor: "#e91e63"
     },
-    inputFocus: {
-      borderColor: "#7b68a2",
-      backgroundColor: "white",
-      boxShadow: "0 0 0 3px rgba(123, 104, 162, 0.1)"
-    },
     errorText: {
       color: "#e91e63",
       fontSize: "0.85rem",
@@ -276,20 +303,17 @@ function FacturacionPage() {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        {/* Header */}
         <div style={styles.header}>
           <h1 style={styles.title}>Datos de Facturación</h1>
-          <p style={styles.subtitle}>Complete la información para generar su factura</p>
+          <p style={styles.subtitle}>Complete la información para procesar su compra</p>
         </div>
 
-        {/* Form */}
         <div style={styles.formContainer}>
-          {/* Info Box */}
           <div style={styles.infoBox}>
             <span style={styles.iconWrapper}>ℹ️</span>
             <div>
               <strong>Importante:</strong> Asegúrese de ingresar los datos correctamente. 
-              Esta información será utilizada para generar su factura electrónica.
+              Recibirá un correo de confirmación y nos contactaremos para coordinar la entrega.
             </div>
           </div>
 
@@ -396,7 +420,7 @@ function FacturacionPage() {
               </div>
             </div>
 
-            {/* NIT y Ciudad (Opcionales) */}
+            {/* NIT y Ciudad */}
             <div style={styles.formRowDouble}>
               <div style={styles.inputGroup}>
                 <label style={styles.label}>
@@ -405,7 +429,7 @@ function FacturacionPage() {
                 <input
                   type="text"
                   name="nit"
-                  placeholder="12345678-9"
+                  placeholder="12345678-9 o C/F"
                   value={formData.nit}
                   onChange={handleChange}
                   style={styles.input}
@@ -432,15 +456,22 @@ function FacturacionPage() {
               <button
                 type="button"
                 onClick={() => navigate(-1)}
+                disabled={isLoading}
                 style={{
                   ...styles.button,
-                  ...styles.buttonSecondary
+                  ...styles.buttonSecondary,
+                  opacity: isLoading ? 0.5 : 1,
+                  cursor: isLoading ? "not-allowed" : "pointer"
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.background = "#f4ebfa";
+                  if (!isLoading) {
+                    e.currentTarget.style.background = "#f4ebfa";
+                  }
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.background = "white";
+                  if (!isLoading) {
+                    e.currentTarget.style.background = "white";
+                  }
                 }}
               >
                 ← Regresar
@@ -466,7 +497,7 @@ function FacturacionPage() {
                   e.currentTarget.style.boxShadow = "0 4px 15px rgba(92, 60, 146, 0.3)";
                 }}
               >
-                {isLoading ? "Procesando..." : "Continuar →"}
+                {isLoading ? "⏳ Procesando..." : "✅ Confirmar Compra →"}
               </button>
             </div>
           </form>
