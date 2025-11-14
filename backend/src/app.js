@@ -1007,22 +1007,21 @@ app.get('/api/profile', verifyToken, async (req, res) => {
     });
   }
 });
-
-// Health Check
-app.get('/ping', (req, res) => res.send('pong'));
-
-//=================== Notificación de Compra =========================
-
+//========================= Notificación de compra ====================
 // Ruta para enviar notificación de compra
 app.post('/api/enviar-notificacion-compra', async (req, res) => {
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('🎯 RUTA ALCANZADA: /api/enviar-notificacion-compra');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  
   try {
-    console.log('📥 Solicitud recibida');
-    console.log('📦 Datos:', req.body);
-
+    console.log('📥 Body recibido:', JSON.stringify(req.body, null, 2));
+    
     // Validar datos
     const { correo, medicamentos, nombre, telefono, direccion } = req.body;
     
     if (!correo || !medicamentos || !nombre || !telefono || !direccion) {
+      console.error('❌ Validación fallida - Campos faltantes');
       return res.status(400).json({ 
         success: false, 
         message: 'Faltan campos requeridos'
@@ -1030,27 +1029,36 @@ app.post('/api/enviar-notificacion-compra', async (req, res) => {
     }
 
     if (!Array.isArray(medicamentos) || medicamentos.length === 0) {
+      console.error('❌ Validación fallida - Carrito vacío');
       return res.status(400).json({ 
         success: false, 
         message: 'El carrito está vacío' 
       });
     }
 
+    console.log('✅ Validación exitosa, llamando a sendPurchaseNotification...');
+    
     // Enviar correos
     const resultado = await sendPurchaseNotification(req.body);
     
     if (resultado) {
-      console.log('✅ Proceso completado');
+      console.log('✅ sendPurchaseNotification retornó true');
       res.json({ 
         success: true, 
         message: 'Correos enviados correctamente' 
       });
     } else {
+      console.error('❌ sendPurchaseNotification retornó false');
       throw new Error('No se pudo completar el envío');
     }
 
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.error('❌ ERROR EN LA RUTA');
+    console.error('Mensaje:', error.message);
+    console.error('Stack:', error.stack);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    
     res.status(500).json({ 
       success: false, 
       message: 'Error del servidor',
@@ -1058,4 +1066,7 @@ app.post('/api/enviar-notificacion-compra', async (req, res) => {
     });
   }
 });
+// Health Check
+app.get('/ping', (req, res) => res.send('pong'));
+
 module.exports = app;

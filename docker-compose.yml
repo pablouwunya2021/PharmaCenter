@@ -32,7 +32,12 @@ services:
       DB_PASSWORD: pharma_password123
       DB_NAME: pharmacenter_db
       JWT_SECRET: equipopharmacenter2024
+      JWT_EXPIRES: 15m
       NODE_ENV: development
+      # Variables de email para notificaciones
+      EMAIL_USER: notipharmacenter@gmail.com
+      EMAIL_PASSWORD: "xgaf ndlk vury zlyz"
+      ALERT_RECIPIENTS: "cas23890@uvg.edu.gt, cab231156@uvg.edu.gt"
     depends_on:
       - postgres
     networks:
